@@ -6,14 +6,14 @@ package com.example.admin.mp3playyer;
 
 public class Song {
     private int id, length;
-    private  String name, singer, author, image;
+    private  String name, singer, author, path;
 
     public Song(String name, int length) {
         this.length = length;
         this.name = name;
         this.singer = "";
         this.author = "";
-        this.image = "";
+        this.path = "";
     }
 
     @Override
@@ -24,7 +24,7 @@ public class Song {
                 ", name='" + name + '\'' +
                 ", singer='" + singer + '\'' +
                 ", author='" + author + '\'' +
-                ", image='" + image + '\'' +
+                ", path='" + path + '\'' +
                 '}';
     }
 
@@ -68,11 +68,11 @@ public class Song {
         this.author = author;
     }
 
-    public String getImage() {
-        return image;
+    public String getPath() {
+        return path;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setPath(String path) {
+        this.path = path;
     }
 }

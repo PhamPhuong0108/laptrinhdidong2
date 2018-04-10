@@ -18,14 +18,14 @@ import java.util.ArrayList;
 public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "PHONG_SQLite";
     private static final String DB_NAME = "db_mp3player";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
     //    Define table songs
     private static final String TB_SONGS = "songs";
     private static final String COL_SONG_ID = "song_id";
     private static final String COL_SONG_NAME = "song_name";
     private static final String COL_SONG_SINGER = "song_singer";
     private static final String COL_SONG_AUTHOR = "song_author";
-    private static final String COL_SONG_IMAGE = "song_image";
+    private static final String COL_SONG_PATH = "song_path";
     private static final String COL_SONG_LENGTH = "song_length";
 
     //    Define table favourites
@@ -58,7 +58,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 COL_SONG_NAME + " TEXT," +
                 COL_SONG_SINGER + " TEXT," +
                 COL_SONG_AUTHOR + " TEXT," +
-                COL_SONG_IMAGE + " TEXT," +
+                COL_SONG_PATH + " TEXT," +
                 COL_SONG_LENGTH + " INTEGER)";
 
         // Script to create table favourites.
@@ -103,10 +103,20 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         values.put(COL_SONG_SINGER, song.getSinger());
         values.put(COL_SONG_AUTHOR, song.getAuthor());
         values.put(COL_SONG_LENGTH, song.getLength());
-        values.put(COL_SONG_IMAGE, song.getImage());
+        values.put(COL_SONG_PATH, song.getPath());
 
         // Chèn một dòng dữ liệu vào bảng.
         db.insert(TB_SONGS, null, values);
+        // Đóng kết nối database.
+        db.close();
+    }
+
+    public void delAllSong(){
+        Log.i(TAG, "MyDatabaseHelper.DeleteAllSong ... ");
+        String sql = "DELETE FROM " + TB_SONGS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(sql);
         // Đóng kết nối database.
         db.close();
     }
@@ -129,6 +139,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 Log.i(TAG, song.toString());
             } while (cursor.moveToNext());
         }
+        db.close();
         // return results
         return results;
     }
