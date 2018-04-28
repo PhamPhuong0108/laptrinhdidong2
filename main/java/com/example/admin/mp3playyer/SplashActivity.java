@@ -1,10 +1,19 @@
 package com.example.admin.mp3playyer;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,33 +31,29 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-class MP3Filter implements FilenameFilter {
-
-    @Override
-    public boolean accept(File dir, String name) {
-        return (name.endsWith(".mp3"));
-    }
-}
-
 public class SplashActivity extends AppCompatActivity {
+    public static final int RUNTIME_PERMISSION_CODE = 7;
+
+    Context context;
+    private static boolean isHavePermission = false;
+
     ImageView imgLogoGirl, imgLogoM, imgLogoMusic;
     Animation animationMoveToBottom, animationMoveToRight, animationMoveToLeft;
     MyDatabaseHelper db;
+
     private static final String Path = Environment.getExternalStorageDirectory().getAbsolutePath();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
+        context = getApplicationContext();
         imgLogoGirl = (ImageView) findViewById(R.id.imgLogoGirl);
         imgLogoM = (ImageView) findViewById(R.id.imgLogoM);
         imgLogoMusic = (ImageView) findViewById(R.id.imgLogoMusic);
 
         db = new MyDatabaseHelper(this);
-        readAllMusic();
-//        db.delAllSong();
-//        updateListSong();
-        Log.i("PHONG", "onCreate: " + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
+
         // start splash
         animationMoveToBottom = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.splash_logo_move_down);
         imgLogoGirl.startAnimation(animationMoveToBottom);
@@ -58,39 +63,77 @@ public class SplashActivity extends AppCompatActivity {
 
         animationMoveToLeft = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.splash_logo_move_to_left);
         imgLogoMusic.startAnimation(animationMoveToLeft);
+
+        // Check Read  Permission.
+        checkStoragePermissionGranted();
+
+        // Read all song in smart phone
+        readAllMusic();
+
+        animationMoveToLeft.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                // Move to home activity ->
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     }
 
     private void readAllMusic() {
-//        String sdCard = Environment.getExternalStorageDirectory().toString();
-//        File file = new File("/mnt/shared/MyMusic");
-        File file =  Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File[] listFiles = file.listFiles();
-        for (int i = 0; i < listFiles.length; i++) {
-            String path = Uri.parse(listFiles[i].getAbsolutePath()).toString();
-            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-            mmr.setDataSource(path);
-            String title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-            String singer = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-            String author = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_COMPOSER);
-            String duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            Song song = new Song(title, Integer.parseInt(duration));
-            song.setAuthor(author);
-            song.setSinger(singer);
-            song.setPath(path);
-            db.addSong(song);
-            Log.i("Phong", "onCreate: " + title + " - " + singer + " - " + author + " - " + duration);
+        String[] STAR = {"*"};
+
+        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+        Cursor cursor = managedQuery(uri, STAR, selection, null, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String songName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                    String path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                    String authorName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.COMPOSER));
+                    String singerName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                    int duration = Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)));
+                    Song song = new Song(duration, songName, singerName, authorName, path);
+                    if (!db.checkSongExisted(songName, authorName, duration))
+                        db.addSong(song);
+                } while (cursor.moveToNext());
+            }
+        }
+
+    }
+
+    public boolean checkStoragePermissionGranted() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            Log.v("PHONG", "Permission is granted");
+            isHavePermission = true;
+            return true;
+        } else {
+
+            Log.v("PHONG", "Permission is revoked");
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            return false;
         }
     }
 
-    private void updateListSong(){
-        File file = new File(Path);
-        if(file.listFiles(new MP3Filter()).length > 0){
-            for (File f : file.listFiles(new MP3Filter())) {
-//                dsBaihat.add(f.getName().toString());
-                Toast.makeText(getApplicationContext(),f.getName().toString(), Toast.LENGTH_LONG).show();
-                Log.i("PHONG", "updateListSong: " + f.getName().toString());
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 110) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                isHavePermission = true;
             }
         }
     }
+
 }
 
