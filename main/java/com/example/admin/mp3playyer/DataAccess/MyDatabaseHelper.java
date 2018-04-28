@@ -94,6 +94,16 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public boolean checkSongExisted(String songName, String songAuthor, int songLength){
+
+        Log.i(TAG, "MyDatabaseHelper.DeleteAllSong ... ");
+        String sql = "SELECT * FROM " + TB_SONGS + " WHERE " + COL_SONG_NAME + "= '" + songName + "' AND " + COL_SONG_AUTHOR + "= '"+ songAuthor + "' AND " + COL_SONG_LENGTH + "=" + songLength;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor.moveToFirst()) return true;
+        return false;
+    }
+
     public void addSong(Song song){
         Log.i(TAG, "MyDatabaseHelper.addSONG ... " + song.getName());
         SQLiteDatabase db = this.getWritableDatabase();
@@ -132,9 +142,15 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
+                int id = cursor.getInt(cursor.getColumnIndex(COL_SONG_ID));
                 int length = cursor.getInt(cursor.getColumnIndex(COL_SONG_LENGTH));
                 String name = cursor.getString(cursor.getColumnIndex(COL_SONG_NAME));
-                Song song = new Song(name, length);
+                String singer = cursor.getString(cursor.getColumnIndex(COL_SONG_SINGER));
+                String author = cursor.getString(cursor.getColumnIndex(COL_SONG_AUTHOR));
+                String path = cursor.getString(cursor.getColumnIndex(COL_SONG_PATH));
+
+                Song song = new Song(length, name, singer, author, path);
+                song.setId(id);
                 results.add(song);
                 Log.i(TAG, song.toString());
             } while (cursor.moveToNext());

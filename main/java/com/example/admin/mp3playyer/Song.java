@@ -8,12 +8,12 @@ public class Song {
     private int id, length;
     private  String name, singer, author, path;
 
-    public Song(String name, int length) {
+    public Song(int length, String name, String singer, String author, String path) {
         this.length = length;
         this.name = name;
-        this.singer = "";
-        this.author = "";
-        this.path = "";
+        this.singer = singer;
+        this.author = author;
+        this.path = path;
     }
 
     @Override
