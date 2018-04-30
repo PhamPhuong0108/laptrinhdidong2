@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
@@ -68,8 +69,6 @@ public class SplashActivity extends AppCompatActivity {
         checkStoragePermissionGranted();
 
         // Read all song in smart phone
-        readAllMusic();
-
         animationMoveToLeft.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -78,7 +77,11 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                readAllMusic();
+
                 // Move to home activity ->
+                Intent splashIntent = new Intent(SplashActivity.this, SearchActivity.class);
+                SplashActivity.this.startActivity(splashIntent);
             }
 
             @Override
