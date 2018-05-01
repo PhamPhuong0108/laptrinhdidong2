@@ -10,7 +10,7 @@
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="@dimen/height_Toolbar"
         android:layout_marginLeft="-10dp"
         android:layout_marginRight="-5dp"
         android:background="@drawable/menu">
@@ -43,7 +43,7 @@
                 android:layout_weight="1"
                 android:background="?android:selectableItemBackground"
                 android:layout_gravity="center"
-                android:layout_marginRight="6dp"
+                android:layout_marginRight="15dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/search_icon"/>
         </LinearLayout>

@@ -2,9 +2,9 @@ package com.example.admin.mp3playyer;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
+import com.example.admin.mp3playyer.Adapters.CustomAdapterAutoComplete;
 import com.example.admin.mp3playyer.DataAccess.MyDatabaseHelper;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ public class SearchActivity extends AppCompatActivity {
 
 //    String[] languages={"Android ","java","IOS","SQL","JDBC","Web services"};
     private AutoCompleteTextView actv;
-    private  CustomAdapterAutoComplete customAdapterAutoComplete = null;
+    private CustomAdapterAutoComplete customAdapterAutoComplete = null;
     private ArrayList<Song> listSong;
     private MyDatabaseHelper db;
 

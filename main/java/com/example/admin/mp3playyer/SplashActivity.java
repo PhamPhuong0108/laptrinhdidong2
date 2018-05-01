@@ -78,10 +78,10 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 readAllMusic();
-
                 // Move to home activity ->
                 Intent splashIntent = new Intent(SplashActivity.this, SearchActivity.class);
                 SplashActivity.this.startActivity(splashIntent);
+                finish();
             }
 
             @Override
