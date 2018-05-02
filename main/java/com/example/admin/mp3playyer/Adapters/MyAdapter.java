@@ -22,7 +22,7 @@ public class MyAdapter extends ArrayAdapter<Playlist> implements TextWatcher {
     int listPosititon;
 
     public MyAdapter(Context context, List<Playlist> list, Activity mcontext) {
-        super(context, R.layout.activity_popup_playlist, list);
+        super(context, R.layout.activity_add_playlist_album, list);
         this.mcontext = mcontext;
         this.list = list;
     }
@@ -37,7 +37,7 @@ public class MyAdapter extends ArrayAdapter<Playlist> implements TextWatcher {
         ViewHolder viewHolder = null;
         if (convertView == null) {
             LayoutInflater inflator = mcontext.getLayoutInflater();
-            convertView = inflator.inflate(R.layout.activity_popup_playlist, null);
+            convertView = inflator.inflate(R.layout.activity_add_playlist_album, null);
             viewHolder = new ViewHolder();
 
             viewHolder.playlist = (EditText) convertView

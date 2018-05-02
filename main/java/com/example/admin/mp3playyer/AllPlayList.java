@@ -1,36 +1,21 @@
 package com.example.admin.mp3playyer;
 
 import android.Manifest;
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import java.util.ArrayList;
 import java.io.File;
-import java.util.Arrays;
 
 import android.os.Environment;
-import android.widget.Toast;
 
 import com.example.admin.mp3playyer.Adapters.PlaylistAdapter;
-import com.example.admin.mp3playyer.DataAccess.MyDatabaseHelper;
 
 
 public class AllPlayList extends AppCompatActivity {
@@ -46,7 +31,7 @@ public class AllPlayList extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_listmusic);
+        setContentView(R.layout.activity_all_list_music);
 
         imgBack = (ImageButton) findViewById(R.id.imgBtnBack);
 

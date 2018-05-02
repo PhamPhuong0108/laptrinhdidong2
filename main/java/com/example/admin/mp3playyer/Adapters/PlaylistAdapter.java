@@ -12,16 +12,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.admin.mp3playyer.Playlist;
 import com.example.admin.mp3playyer.R;
 
-import org.w3c.dom.Text;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.SimpleTimeZone;
-import java.util.TimeZone;
 
 public class PlaylistAdapter extends BaseAdapter {
     private ArrayList<String> paths;
@@ -54,7 +47,7 @@ public class PlaylistAdapter extends BaseAdapter {
         Holder holder;
         if (convertView == null) {
             holder = new Holder();
-            convertView = inflater.inflate(R.layout.items_allist, parent, false);
+            convertView = inflater.inflate(R.layout.activity_item_list_music, parent, false);
             holder.imgHinh = (ImageView) convertView.findViewById(R.id.imgIcon);
             holder.txtTitle = (TextView) convertView.findViewById(R.id.txtTitle);
             holder.txtCasi = (TextView) convertView.findViewById(R.id.txtCaSi);

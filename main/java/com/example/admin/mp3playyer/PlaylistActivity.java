@@ -11,15 +11,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.view.View.OnClickListener;
-import android.app.Activity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import com.example.admin.mp3playyer.Adapters.MyAdapter;
-import com.example.admin.mp3playyer.R;
 
 public class PlaylistActivity extends AppCompatActivity {
     final Context context = this;
@@ -39,7 +34,7 @@ public class PlaylistActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_playlists);
+        setContentView(R.layout.activity_playlists_album);
 
         mContext = this;
         imgBtnAdd = (ImageButton) findViewById(R.id.imgButtonAdd);
@@ -47,7 +42,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
         String[] items = {"Playlist 1", "Playlist 2"};
         arrayList = new ArrayList<>(Arrays.asList(items));
-        arrayAdapter = new ArrayAdapter<String>(this, R.layout.activity_itemlist, R.id.txtItems, arrayList);
+        arrayAdapter = new ArrayAdapter<String>(this, R.layout.activity_items_playlist, R.id.txtItems, arrayList);
 
         myList.setAdapter(arrayAdapter);
 
@@ -57,7 +52,7 @@ public class PlaylistActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 final Dialog dialog = new Dialog(context);
-                dialog.setContentView(R.layout.activity_popup_playlist);
+                dialog.setContentView(R.layout.activity_add_playlist_album);
 
                 // set the custom dialog components - text, image and button
                 TextView text = (TextView) dialog.findViewById(R.id.text);
