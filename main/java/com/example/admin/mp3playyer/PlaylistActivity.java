@@ -2,7 +2,10 @@ package com.example.admin.mp3playyer;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.util.Log;
@@ -75,12 +78,19 @@ public class PlaylistActivity extends AppCompatActivity {
                 dialogButtonOK.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(getApplicationContext(), "abc", Toast.LENGTH_SHORT).show();
+                        db = new MyDatabaseHelper(mContext);
+
                         String txtInput = txtInputPlaylist.getText().toString();
                         myPlaylist.add(new Playlist(txtInput));
                         playlistAdapter.notifyDataSetChanged();
+                        Toast.makeText(getApplicationContext(), txtInput.toString() + " đã  được tạo thành công", Toast.LENGTH_SHORT).show();
+
+                        //Add into database
+                        Playlist playlist = new Playlist(txtInput);
+                        db.addPlaylist(playlist);
+                        Toast.makeText(getApplicationContext(), "Luu thanh cong" + playlist, Toast.LENGTH_SHORT).show();
+
                         dialog.dismiss();
-                        Toast.makeText(getApplicationContext(), txtInput.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
                 dialog.show();
