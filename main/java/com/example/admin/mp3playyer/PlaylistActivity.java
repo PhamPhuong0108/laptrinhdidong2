@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 import com.example.admin.mp3playyer.Adapters.AddPlaylistAdapter;
 import com.example.admin.mp3playyer.DataAccess.MyDatabaseHelper;
@@ -31,7 +32,7 @@ public class PlaylistActivity extends AppCompatActivity {
     private AddPlaylistAdapter playlistAdapter;
     private EditText txtInputPlaylist;
     private MyDatabaseHelper db;
-    private TextView text;
+    private TextView txtTitle;
     private Dialog dialog;
     ArrayList<Playlist> myPlaylist = new ArrayList<>();
 
@@ -40,11 +41,12 @@ public class PlaylistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlists_album);
 
+        mContext = this;
         //Goi bien
         imgBtnAdd = (ImageButton) findViewById(R.id.imgButtonAdd);
         myList = (ListView) findViewById(R.id.lvPlaylist );
 
-        playlistAdapter = new AddPlaylistAdapter(this, R.layout.activity_items_playlist, myPlaylist);
+        playlistAdapter = new AddPlaylistAdapter(this, R.layout.activity_playlists_album, myPlaylist);
         myList.setAdapter(playlistAdapter);
 
         //adapter = new MyAdapter((Activity) mContext, list, context);
@@ -53,13 +55,13 @@ public class PlaylistActivity extends AppCompatActivity {
             public void onClick(View v) {
                 dialog = new Dialog(context);
                 dialog.setContentView(R.layout.activity_add_playlist_album);
-                text = (TextView) dialog.findViewById(R.id.text);
+                txtTitle = (TextView) dialog.findViewById(R.id.txtTitle);
                 txtInputPlaylist = (EditText) dialog.findViewById(R.id.txtPlaylist);
                 dialogButtonCancel = (Button) dialog.findViewById(R.id.dlButtonCancel);
                 dialogButtonOK = (Button) dialog.findViewById(R.id.dlButtonOK);
 
                 // set the custom dialog components - text, image and button
-                text.setText("Tạo Playlist:");
+                txtTitle.setText("Tạo Playlist:");
 
                 // if button is clicked, close the custom dialog
                 dialogButtonCancel.setOnClickListener(new OnClickListener() {
@@ -73,11 +75,12 @@ public class PlaylistActivity extends AppCompatActivity {
                 dialogButtonOK.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        Toast.makeText(getApplicationContext(), "abc", Toast.LENGTH_SHORT).show();
                         String txtInput = txtInputPlaylist.getText().toString();
                         myPlaylist.add(new Playlist(txtInput));
-                        Log.d("djknkvdsjk", "dskfJB");
                         playlistAdapter.notifyDataSetChanged();
                         dialog.dismiss();
+                        Toast.makeText(getApplicationContext(), txtInput.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
                 dialog.show();

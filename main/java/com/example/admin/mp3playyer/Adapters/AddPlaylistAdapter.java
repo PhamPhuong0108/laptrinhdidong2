@@ -12,75 +12,56 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.admin.mp3playyer.Playlist;
 import com.example.admin.mp3playyer.R;
 import com.example.admin.mp3playyer.Song;
 
-public class AddPlaylistAdapter extends ArrayAdapter<Playlist> implements TextWatcher {
-    private Activity mContext;
+public class AddPlaylistAdapter extends ArrayAdapter<Playlist>{
+    private Context mContext;
     private int listPosititon;
     private ArrayList<Playlist> playlistList;
+    private LayoutInflater inflater;
 
-    public AddPlaylistAdapter(Activity context, int resources, ArrayList<Playlist> object) {
+    public AddPlaylistAdapter(Context context, int resources, ArrayList<Playlist> object) {
         super(context, resources, object);
         this.mContext = context;
         this.listPosititon = resources;
         this.playlistList = object;
     }
 
-    class ViewHolder {
-        protected EditText playlist;
+    class Holder {
+        TextView playlist;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        listPosititon = position;
-        ViewHolder viewHolder = null;
+        Holder holder = null;
 
         if (convertView == null) {
-            LayoutInflater inflator = mContext.getLayoutInflater();
-            convertView = inflator.inflate(R.layout.activity_add_playlist_album, null);
-            viewHolder = new ViewHolder();
+            holder = new Holder();
+            inflater = LayoutInflater.from(mContext);
+            convertView = inflater.inflate(R.layout.activity_items_playlist, parent, false);
 
-            viewHolder.playlist = (EditText) convertView
-                    .findViewById(R.id.txtPlaylist);
+            holder.playlist = (TextView) convertView.findViewById(R.id.txtItems);
+            convertView.setTag(holder);
 
-            viewHolder.playlist.addTextChangedListener(this);
-
-            convertView.setTag(viewHolder);
-
-            convertView.setTag(R.id.txtPlaylist, viewHolder.playlist);
         } else {
-            viewHolder = (ViewHolder) convertView.getTag();
+            holder = (Holder) convertView.getTag();
         }
 
-        viewHolder.playlist.setText(playlistList.get(position).getNamePlaylist());
+        Playlist myPlaylist = playlistList.get(position);
+        holder.playlist.setText(myPlaylist.getNamePlaylist());
         if (playlistList.get(position).getNamePlaylist() != null) {
-            viewHolder.playlist.setText(playlistList.get(position).getNamePlaylist() + "");
+            holder.playlist.setText(playlistList.get(position).getNamePlaylist() + "");
         } else {
-            viewHolder.playlist.setText("");
+            holder.playlist.setText("");
         }
 
         return convertView;
     }
 
-    @Override
-    public void afterTextChanged(Editable s) {
-        playlistList.get(listPosititon).setNamePlaylist(s.toString());
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-                                  int arg3) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-        // TODO Auto-generated method stub
-
-    }
 }
