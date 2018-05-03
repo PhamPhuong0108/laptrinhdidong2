@@ -2,6 +2,7 @@ package com.example.admin.mp3playyer;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,7 +29,7 @@ import java.util.Arrays;
 
 public class PlaylistActivity extends AppCompatActivity {
     private Context context = this;
-    private ImageButton imgBtnAdd;
+    private ImageButton imgBtnAdd, imgBtnBack;
     private ListView myList;
     private Context mContext;
     private Button dialogButtonCancel;
@@ -35,7 +37,7 @@ public class PlaylistActivity extends AppCompatActivity {
     private AddPlaylistAdapter playlistAdapter;
     private EditText txtInputPlaylist;
     private MyDatabaseHelper db;
-    private TextView txtTitle;
+    private TextView txtTitle, txtItemPlaylist;
     private Dialog dialog;
     ArrayList<Playlist> myPlaylist = new ArrayList<>();
 
@@ -46,8 +48,11 @@ public class PlaylistActivity extends AppCompatActivity {
 
         mContext = this;
         //Goi bien
+        imgBtnBack = (ImageButton) findViewById(R.id.btnBack);
         imgBtnAdd = (ImageButton) findViewById(R.id.imgButtonAdd);
-        myList = (ListView) findViewById(R.id.lvPlaylist );
+        myList = (ListView) findViewById(R.id.lvPlaylist);
+        txtItemPlaylist = (TextView) findViewById(R.id.txtItems);
+
 
         //Load data form db and add new playlist into listview
         db = new MyDatabaseHelper(this);
@@ -55,10 +60,16 @@ public class PlaylistActivity extends AppCompatActivity {
         playlistAdapter = new AddPlaylistAdapter(this, R.layout.activity_playlists_album, myPlaylist);
         myList.setAdapter(playlistAdapter);
 
-        myList.setOnClickListener(new OnClickListener() {
+        //Delete item playlist in listview and db
+        myList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Xóa thành công ", Toast.LENGTH_SHORT).show();
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                String itemPlaylist = txtItemPlaylist.getText().toString();
+//                Playlist mList = new Playlist(itemPlaylist);
+//                db.deletePlaylist(mList);
+//                playlistAdapter.notifyDataSetChanged();
+//                Toast.makeText(getApplicationContext(), "Xóa thành công ", Toast.LENGTH_SHORT).show();
+                return false;
             }
         });
 
@@ -104,6 +115,14 @@ public class PlaylistActivity extends AppCompatActivity {
                     }
                 });
                 dialog.show();
+            }
+        });
+
+        imgBtnBack.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intentBackHome = new Intent(PlaylistActivity.this, HomeActivity.class);
+                startActivity(intentBackHome);
             }
         });
     }
