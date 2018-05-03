@@ -1,9 +1,29 @@
 package com.example.admin.mp3playyer;
 
 public class Playlist {
+    private int idPlaylist;
     private String namePlaylist;
-    private int nTongBaiHat;
 
+    public Playlist(String namePlaylist) {
+        this.namePlaylist = namePlaylist;
+
+    }
+
+    @Override
+    public String toString() {
+        return "Playlist{" +
+                "idPlaylist=" + idPlaylist +
+                ", namePlaylist=" + namePlaylist + '\'' +
+                '}';
+    }
+
+    public int getIdPlaylist() {
+        return idPlaylist;
+    }
+
+    public void setIdPlaylist(int idPlaylist) {
+        this.idPlaylist = idPlaylist;
+    }
 
     public String getNamePlaylist() {
         return namePlaylist;
@@ -11,25 +31,5 @@ public class Playlist {
 
     public void setNamePlaylist(String namePlaylist) {
         this.namePlaylist = namePlaylist;
-    }
-
-    public int getnTongBaiHat() {
-        return nTongBaiHat;
-    }
-
-    public void setnTongBaiHat(int nTongBaiHat) {
-        this.nTongBaiHat = nTongBaiHat;
-    }
-
-    public Playlist(String ten, int tong)
-    {
-        this.namePlaylist = ten;
-        this.nTongBaiHat = tong;
-    }
-
-    public Playlist(String playlist_2)
-    {
-        this.namePlaylist = "";
-        this.nTongBaiHat = 0;
     }
 }

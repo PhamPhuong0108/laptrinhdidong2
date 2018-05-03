@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,54 +15,51 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
 
+import com.example.admin.mp3playyer.Adapters.AddPlaylistAdapter;
+import com.example.admin.mp3playyer.DataAccess.MyDatabaseHelper;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class PlaylistActivity extends AppCompatActivity {
-    final Context context = this;
-    ImageButton imgBtnAdd;
+    private Context context = this;
+    private ImageButton imgBtnAdd;
     private ListView myList;
-    Context mContext;
-//    MyAdapter adapter;
-//    ArrayList<Playlist> list = new ArrayList<Playlist>();
-
-    Button dialogButtonCancel;
-    Button dialogButtonOK;
-
-    private ArrayList<String> arrayList;
-    private ArrayAdapter<String> arrayAdapter;
+    private Context mContext;
+    private Button dialogButtonCancel;
+    private Button dialogButtonOK;
+    private AddPlaylistAdapter playlistAdapter;
     private EditText txtInputPlaylist;
+    private MyDatabaseHelper db;
+    private TextView text;
+    private Dialog dialog;
+    ArrayList<Playlist> myPlaylist = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlists_album);
 
-        mContext = this;
+        //Goi bien
         imgBtnAdd = (ImageButton) findViewById(R.id.imgButtonAdd);
         myList = (ListView) findViewById(R.id.lvPlaylist );
 
-        String[] items = {"Playlist 1", "Playlist 2"};
-        arrayList = new ArrayList<>(Arrays.asList(items));
-        arrayAdapter = new ArrayAdapter<String>(this, R.layout.activity_items_playlist, R.id.txtItems, arrayList);
-
-        myList.setAdapter(arrayAdapter);
+        playlistAdapter = new AddPlaylistAdapter(this, R.layout.activity_items_playlist, myPlaylist);
+        myList.setAdapter(playlistAdapter);
 
         //adapter = new MyAdapter((Activity) mContext, list, context);
         imgBtnAdd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                final Dialog dialog = new Dialog(context);
+                dialog = new Dialog(context);
                 dialog.setContentView(R.layout.activity_add_playlist_album);
-
-                // set the custom dialog components - text, image and button
-                TextView text = (TextView) dialog.findViewById(R.id.text);
-                text.setText("Tạo Playlist:");
-
+                text = (TextView) dialog.findViewById(R.id.text);
                 txtInputPlaylist = (EditText) dialog.findViewById(R.id.txtPlaylist);
                 dialogButtonCancel = (Button) dialog.findViewById(R.id.dlButtonCancel);
                 dialogButtonOK = (Button) dialog.findViewById(R.id.dlButtonOK);
+
+                // set the custom dialog components - text, image and button
+                text.setText("Tạo Playlist:");
 
                 // if button is clicked, close the custom dialog
                 dialogButtonCancel.setOnClickListener(new OnClickListener() {
@@ -74,9 +73,10 @@ public class PlaylistActivity extends AppCompatActivity {
                 dialogButtonOK.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        String newItem =  txtInputPlaylist.getText().toString();
-                        arrayList.add(newItem);
-                        arrayAdapter.notifyDataSetChanged();
+                        String txtInput = txtInputPlaylist.getText().toString();
+                        myPlaylist.add(new Playlist(txtInput));
+                        Log.d("djknkvdsjk", "dskfJB");
+                        playlistAdapter.notifyDataSetChanged();
                         dialog.dismiss();
                     }
                 });

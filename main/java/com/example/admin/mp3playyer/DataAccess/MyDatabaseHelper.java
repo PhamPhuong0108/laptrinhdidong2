@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.admin.mp3playyer.Playlist;
 import com.example.admin.mp3playyer.Song;
 
 import java.util.ArrayList;
@@ -118,6 +119,20 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         // Chèn một dòng dữ liệu vào bảng.
         db.insert(TB_SONGS, null, values);
         // Đóng kết nối database.
+        db.close();
+    }
+
+
+    //Add playlist
+    public void addPlaylist(Playlist playlist)
+    {
+        Log.i(TAG, "MyDatabaseHelper.addPlaylist ... " + playlist.getNamePlaylist());
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COL_PLAYLIST_NAME, playlist.getNamePlaylist());
+
+        db.insert(TB_PLAYLISTS, null, values);
         db.close();
     }
 
