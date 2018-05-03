@@ -1,15 +1,21 @@
 package com.example.admin.mucicplayer;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -24,23 +30,34 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class ScreenPlayerActivity extends AppCompatActivity {
-    TextView txtNameSong, txtTimeCurrent, txtTimeSong;
-    Button  btnPre, btnPlay, btnNext, btnFavourite, btnShare,btnRepeat, btnShuffle;
-    SeekBar sbSong;
-    ImageView imvDics;
-    Animation animation;
+    private TextView txtNameSong, txtTimeCurrent, txtTimeSong;
+    private Button  btnPre, btnPlay, btnNext, btnFavourite, btnShare,btnRepeat, btnShuffle;
+    private SeekBar sbSong;
+    private ImageView imvDics;
+    private Animation animation;
+    private MusicPlayer musicPlayer;
     private int repeat = 0;
     private boolean shuffle = false;
     private Random rand;
     private SharedPreferences sp;
-    ArrayList<Song> arraySong;
-    int position = 0;
-    MediaPlayer mediaPlayer;
+    private ArrayList<Song> arraySong;
+    private int position = 0;
+    private MediaPlayer mediaPlayer;
+    private boolean isPlaying = false;
+    private Handler handler;
+    private static final int UPDATE_STATE_PLAY = 0;
+    private static final int NEXT_MUSIC = 1;
+    private boolean isNotOver;
+    private SeekBar sbProTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_player_layout);
+        Intent intent = new Intent(this, MusicPlayer.class);
+        bindService(intent, connection, BIND_AUTO_CREATE);
+        Log.d("onCreate","a");
+        startService(intent);
         initViews();
         addSong();
         loadControl();
@@ -164,6 +181,50 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                 mediaPlayer.seekTo(sbSong.getProgress());
             }
         });
+    }
+
+    //tao ket noi service
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            // nhan ket qua tro ve
+            Log.d("onServiceConnected","a");
+            MusicPlayer.MyBinderMedia media = (MusicPlayer.MyBinderMedia) iBinder;
+            musicPlayer = media.getService();
+//            mediaPlayer = musicPlayer.getMediaPlayer();
+            if (musicPlayer.getMediaPlayer()!=null)
+            {
+            if (musicPlayer.getMediaPlayer().isPlaying())
+            {
+                musicPlayer.getMediaPlayer().pause();
+            }
+            else{
+                Toast.makeText(getApplicationContext(), "AAAAAAAAAAAAAAAAAA", Toast.LENGTH_SHORT).show();
+            }}
+            btnPlay.setBackgroundResource(R.drawable.pause);
+            setTimeTotal();
+            updateTimeCurrent();
+            imvDics.startAnimation(animation);
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            Log.d("onServiceDisconnected","a");
+        }
+    };
+
+
+    @Override
+    protected void onDestroy() {
+        saveControl();
+        super.onDestroy();
+        unbindService(connection);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     //Repeat
@@ -360,4 +421,4 @@ public class ScreenPlayerActivity extends AppCompatActivity {
         if(shuffle) shuffle=false;
         else shuffle=true;
     }
-}
+   }
