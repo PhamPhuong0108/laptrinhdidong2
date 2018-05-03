@@ -8,6 +8,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.io.File;
 
 import android.os.Environment;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.admin.mp3playyer.Adapters.PlaylistAdapter;
 import com.example.admin.mp3playyer.DataAccess.MyDatabaseHelper;
@@ -33,6 +35,8 @@ public class AllPlayList extends AppCompatActivity {
     private ArrayList<Song> mListItems;
     private MyDatabaseHelper db;
     private TextView txtItem;
+    private Intent intent;
+    public static final String POSITION = "position";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,12 +53,20 @@ public class AllPlayList extends AppCompatActivity {
         playlistAdapter = new PlaylistAdapter(this, R.layout.activity_all_list_music, mListItems);
         lvAllList.setAdapter(playlistAdapter);
 
+        lvAllList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                intent = new Intent(AllPlayList.this,ScreenPlayerActivity.class);
+                intent.putExtra(POSITION,String.valueOf(playlistAdapter.getItemId(position)));
+                startActivity(intent);
+            }
+        });
 
         //Return Home Display
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AllPlayList.this, HomeActivity.class);
+                intent = new Intent(AllPlayList.this, HomeActivity.class);
                 startActivity(intent);
             }
         });

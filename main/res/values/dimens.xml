@@ -4,4 +4,8 @@
     <dimen name="sizeButton">50dp</dimen>
     <dimen name="sizeText">16sp</dimen>
     <dimen name="sizeGirl">120dp</dimen>
+    <dimen name="sizeDics">250dp</dimen>
+    <dimen name="mgTopDisc">70dp</dimen>
+    <dimen name="mgBottomSing">220dp</dimen>
+    <dimen name="withSeekBar">284dp</dimen>
 </resources>

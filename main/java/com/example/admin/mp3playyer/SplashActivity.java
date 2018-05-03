@@ -79,7 +79,7 @@ public class SplashActivity extends AppCompatActivity {
             public void onAnimationEnd(Animation animation) {
                 readAllMusic();
                 // Move to home activity ->
-                Intent splashIntent = new Intent(SplashActivity.this, PlaySongAllList.class);
+                Intent splashIntent = new Intent(SplashActivity.this, AllPlayList.class);
                 SplashActivity.this.startActivity(splashIntent);
                 finish();
             }

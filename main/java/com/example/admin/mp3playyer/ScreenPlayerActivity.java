@@ -27,6 +27,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.admin.mp3playyer.DataAccess.MyDatabaseHelper;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,15 +45,21 @@ public class ScreenPlayerActivity extends AppCompatActivity {
     private boolean shuffle = false;
     private Random rand;
     private SharedPreferences sp;
+    private MyDatabaseHelper db;
     private ArrayList<Song> arraySong;
     private int position = 0;
     private MediaPlayer mediaPlayer;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_player_layout);
-        Intent intent = new Intent(this, MusicPlayer.class);
+        intent = getIntent();
+        position =Integer.parseInt(intent.getStringExtra(AllPlayList.POSITION));
+        db = new MyDatabaseHelper(this);
+        arraySong = db.getSongs();
+        intent = new Intent(this, MusicPlayer.class);
         bindService(intent, connection, BIND_AUTO_CREATE);
         Log.d("onCreate","a");
         startService(intent);
@@ -60,6 +68,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
         rand=new Random();
         animation = AnimationUtils.loadAnimation(this,R.anim.disc_rotate);
         startMediaPlayer();
+        mediaPlayer.start();
 
         //Xữ lý sự kiện
         btnPlay.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +94,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                 shuffleSong();
                 if (mediaPlayer.isPlaying()){
                     mediaPlayer.stop();
+                    mediaPlayer.release();
                 }
                 startMediaPlayer();
                 mediaPlayer.start();
@@ -111,6 +121,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                 }
                 if (mediaPlayer.isPlaying()){
                     mediaPlayer.stop();
+                    mediaPlayer.release();
                 }
                 startMediaPlayer();
                 mediaPlayer.start();
@@ -197,10 +208,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
             else{
                 Toast.makeText(getApplicationContext(), "AAAAAAAAAAAAAAAAAA", Toast.LENGTH_SHORT).show();
             }}
-            btnPlay.setBackgroundResource(R.drawable.pause);
-            setTimeTotal();
-            updateTimeCurrent();
-            imvDics.startAnimation(animation);
+
 
         }
 
@@ -240,6 +248,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                             position=newSong;
                             if (mediaPlayer.isPlaying()){
                                 mediaPlayer.stop();
+                                mediaPlayer.release();
                             }
                             startMediaPlayer();
                             mediaPlayer.start();
@@ -259,6 +268,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                             }else {
                                 if (mediaPlayer.isPlaying()){
                                     mediaPlayer.stop();
+                                    mediaPlayer.release();
                                 }
                                 startMediaPlayer();
                                 mediaPlayer.start();
@@ -292,6 +302,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                         shuffleSong();
                         if (mediaPlayer.isPlaying()){
                             mediaPlayer.stop();
+                            mediaPlayer.release();
                         }
                         startMediaPlayer();
                         mediaPlayer.start();
@@ -378,16 +389,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
     //Khởi tạo media
     private void startMediaPlayer(){
         Uri uri = Uri.parse(arraySong.get(position).getPath());
-        Uri myUri = Uri.parse("file:///sdcard/mp3/example.mp3");
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        try {
-            mediaPlayer.setDataSource(getApplicationContext(), myUri);
-            mediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
+        mediaPlayer = MediaPlayer.create(ScreenPlayerActivity.this,uri);
         txtNameSong.setText(arraySong.get(position).getName());
     }
 

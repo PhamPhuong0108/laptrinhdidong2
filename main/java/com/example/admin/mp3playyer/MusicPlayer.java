@@ -1,4 +1,4 @@
-package com.example.admin.mucicplayer;
+package com.example.admin.mp3playyer;
 
 import android.app.Service;
 import android.content.Context;
