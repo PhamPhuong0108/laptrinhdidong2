@@ -3,7 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="colorTransparent"></color>
+    <color name="colorTransparent">#000</color>
+
     <color name="colorBackgroundPlaylist">#151515</color>
-    <color name="colorText">#818181</color>
+    <color name="colorText">#dcd6d6</color>
 </resources>
