@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "PHONG_SQLite";
     private static final String DB_NAME = "db_mp3player";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 4;
     //    Define table songs
     private static final String TB_SONGS = "songs";
     private static final String COL_SONG_ID = "song_id";
@@ -122,20 +122,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-
-    //Add playlist
-    public void addPlaylist(Playlist playlist)
-    {
-        Log.i(TAG, "MyDatabaseHelper.addPlaylist ... " + playlist.getNamePlaylist());
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(COL_PLAYLIST_NAME, playlist.getNamePlaylist());
-
-        db.insert(TB_PLAYLISTS, null, values);
-        db.close();
-    }
-
     public void delAllSong(){
         Log.i(TAG, "MyDatabaseHelper.DeleteAllSong ... ");
         String sql = "DELETE FROM " + TB_SONGS;
@@ -174,4 +160,53 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         // return results
         return results;
     }
+
+    //function add new playlist into db
+    public void addPlaylist(Playlist playlist)
+    {
+        Log.i(TAG, "MyDatabaseHelper.AddPlaylist ... " + playlist.getNamePlaylist());
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COL_PLAYLIST_NAME, playlist.getNamePlaylist());
+
+        db.insert(TB_PLAYLISTS, null, values);
+        db.close();
+    }
+
+    //function get all playlist in db
+    public ArrayList<Playlist> getPlaylist() {
+        Log.i(TAG, "MyDatabaseHelper.GetPlaylist ... " );
+        ArrayList<Playlist> results = new ArrayList<Playlist>();
+
+        String selectQuery = "SELECT  * FROM " + TB_PLAYLISTS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndex(COL_PLAYLIST_ID));
+                String name = cursor.getString(cursor.getColumnIndex(COL_PLAYLIST_NAME));
+
+                Playlist playlist = new Playlist(name);
+                playlist.getIdPlaylist();
+                results.add(playlist);
+                Log.i(TAG, playlist.toString());
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        // return results
+        return results;
+    }
+
+    //function delete playlist form db
+    public void deletePlaylist(Playlist playlist){
+        Log.i(TAG, "MyDatabaseHelper.DeletePlaylist ... ");
+        String sql = "DELETE FROM " + TB_SONGS + " WHERE " + COL_PLAYLIST_ID ;
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(sql);
+        db.close();
+    }
+
 }

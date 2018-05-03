@@ -49,8 +49,18 @@ public class PlaylistActivity extends AppCompatActivity {
         imgBtnAdd = (ImageButton) findViewById(R.id.imgButtonAdd);
         myList = (ListView) findViewById(R.id.lvPlaylist );
 
+        //Load data form db and add new playlist into listview
+        db = new MyDatabaseHelper(this);
+        myPlaylist = db.getPlaylist();
         playlistAdapter = new AddPlaylistAdapter(this, R.layout.activity_playlists_album, myPlaylist);
         myList.setAdapter(playlistAdapter);
+
+        myList.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Xóa thành công ", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         //adapter = new MyAdapter((Activity) mContext, list, context);
         imgBtnAdd.setOnClickListener(new OnClickListener() {
@@ -83,12 +93,12 @@ public class PlaylistActivity extends AppCompatActivity {
                         String txtInput = txtInputPlaylist.getText().toString();
                         myPlaylist.add(new Playlist(txtInput));
                         playlistAdapter.notifyDataSetChanged();
-                        Toast.makeText(getApplicationContext(), txtInput.toString() + " đã  được tạo thành công", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), txtInput.toString() + " đã được tạo thành công", Toast.LENGTH_SHORT).show();
 
-                        //Add into database
+                        //Add playlist into database
                         Playlist playlist = new Playlist(txtInput);
                         db.addPlaylist(playlist);
-                        Toast.makeText(getApplicationContext(), "Luu thanh cong" + playlist, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Lưu thành công " + playlist.getNamePlaylist(), Toast.LENGTH_SHORT).show();
 
                         dialog.dismiss();
                     }
