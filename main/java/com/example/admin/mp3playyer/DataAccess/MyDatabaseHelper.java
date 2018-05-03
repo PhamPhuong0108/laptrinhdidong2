@@ -203,7 +203,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     //function delete playlist form db
     public void deletePlaylist(Playlist playlist){
         Log.i(TAG, "MyDatabaseHelper.DeletePlaylist ... ");
-        String sql = "DELETE FROM " + TB_SONGS + " WHERE " + COL_PLAYLIST_ID ;
+        String sql = "DELETE FROM " + TB_SONGS + " WHERE " + COL_PLAYLIST_ID + " = " + playlist.getIdPlaylist() ;
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(sql);
         db.close();
