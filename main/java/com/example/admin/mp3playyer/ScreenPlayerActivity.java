@@ -57,8 +57,6 @@ public class ScreenPlayerActivity extends AppCompatActivity {
         setContentView(R.layout.screen_player_layout);
         intent = getIntent();
         position =Integer.parseInt(intent.getStringExtra(AllPlayList.POSITION));
-        db = new MyDatabaseHelper(this);
-        arraySong = db.getSongs();
         intent = new Intent(this, MusicPlayer.class);
         bindService(intent, connection, BIND_AUTO_CREATE);
         Log.d("onCreate","a");
@@ -68,7 +66,10 @@ public class ScreenPlayerActivity extends AppCompatActivity {
         rand=new Random();
         animation = AnimationUtils.loadAnimation(this,R.anim.disc_rotate);
         startMediaPlayer();
-        mediaPlayer.start();
+        btnPlay.setBackgroundResource(R.drawable.pause);
+        setTimeTotal();
+        updateTimeCurrent();
+        imvDics.startAnimation(animation);
 
         //Xữ lý sự kiện
         btnPlay.setOnClickListener(new View.OnClickListener() {
@@ -169,6 +170,13 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                     default:
                         break;
                 }
+            }
+        });
+
+        btnFavourite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               // db.get
             }
         });
 

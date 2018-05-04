@@ -38,6 +38,21 @@ public class AddPlaylistAdapter extends ArrayAdapter<Playlist>{
     }
 
     @Override
+    public int getCount() {
+        return playlistList.size();
+    }
+
+    @Override
+    public Playlist getItem(int position) {
+        return playlistList.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Holder holder = null;
 
