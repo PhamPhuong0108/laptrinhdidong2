@@ -40,8 +40,6 @@
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
-        <activity android:name=".HomeActivity">
-        </activity>
         <activity android:name=".PlaySongAllList">
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
@@ -58,6 +56,9 @@
             <!--<intent-filter>-->
                 <!--<action android:name="com.blah.blah.action.PLAY" />-->
             <!--</intent-filter>-->
+        </activity>
+        <activity android:name=".NavActivity"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <service android:name=".MusicPlayer"></service>
     </application>

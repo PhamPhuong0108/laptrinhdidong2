@@ -7,12 +7,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -22,15 +28,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
+import android.support.v4.app.Fragment;
 
 import com.example.admin.mp3playyer.Adapters.AddPlaylistAdapter;
 import com.example.admin.mp3playyer.DataAccess.MyDatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.zip.Inflater;
 
-public class PlaylistActivity extends AppCompatActivity {
-    private Context context = this;
+public class PlaylistActivity extends Fragment {
+    private Context context;
     private ImageButton imgBtnAdd, imgBtnBack;
     private ListView myList;
     private Context mContext;
@@ -43,22 +51,22 @@ public class PlaylistActivity extends AppCompatActivity {
     private Dialog dialog;
     private
     ArrayList<Playlist> myPlaylist = new ArrayList<>();
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_playlists_album);
 
-        mContext = this;
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View myFragmentView = inflater.inflate(R.layout.fragment_home, container, false);
+        context = myFragmentView.getContext();
         //Goi bien
-        imgBtnBack = (ImageButton) findViewById(R.id.btnBack);
-        imgBtnAdd = (ImageButton) findViewById(R.id.imgButtonAdd);
-        myList = (ListView) findViewById(R.id.lvPlaylist);
+        imgBtnBack = (ImageButton) myFragmentView.findViewById(R.id.btnBack);
+        imgBtnAdd = (ImageButton) myFragmentView.findViewById(R.id.imgButtonAdd);
+        myList = (ListView) myFragmentView.findViewById(R.id.lvPlaylist);
 
         //Load data form db and add new playlist into listview
-        db = new MyDatabaseHelper(this);
+        db = new MyDatabaseHelper(context);
         myPlaylist = db.getPlaylist();
 //        Toast.makeText(getApplicationContext(), myPlaylist.toString(), Toast.LENGTH_SHORT).show();
-        playlistAdapter = new AddPlaylistAdapter(this, R.layout.activity_playlists_album, myPlaylist);
+        playlistAdapter = new AddPlaylistAdapter(myFragmentView.getContext(), R.layout.activity_playlists_album, myPlaylist);
         myList.setAdapter(playlistAdapter);
 
         myList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -71,7 +79,7 @@ public class PlaylistActivity extends AppCompatActivity {
                 dlDeleteOK = (Button) dialog.findViewById(R.id.dlBtnOKl);
                 txtItemPlaylist.setText("Bạn có muốn xóa " + myPlaylist.get(pos).getNamePlaylist() + " không ?");
 
-                Toast.makeText(getApplicationContext(), String.valueOf(playlistAdapter.getItemId(pos)), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, String.valueOf(playlistAdapter.getItemId(pos)), Toast.LENGTH_SHORT).show();
                 dlDeleteCancel.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -83,7 +91,7 @@ public class PlaylistActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         db.deletePlaylist(myPlaylist.get(pos).getIdPlaylist());
-                        Toast.makeText(getApplicationContext(), "Xóa thành công ", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Xóa thành công ", Toast.LENGTH_SHORT).show();
                         myPlaylist.remove(pos);
                         playlistAdapter.notifyDataSetChanged();
                         dialog.dismiss();
@@ -127,12 +135,12 @@ public class PlaylistActivity extends AppCompatActivity {
                         String txtInput = txtInputPlaylist.getText().toString();
                         myPlaylist.add(new Playlist(txtInput));
                         playlistAdapter.notifyDataSetChanged();
-                        Toast.makeText(getApplicationContext(), txtInput.toString() + " đã được tạo thành công", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, txtInput.toString() + " đã được tạo thành công", Toast.LENGTH_SHORT).show();
 
                         //Add playlist into database
                         Playlist playlist = new Playlist(txtInput);
                         db.addPlaylist(playlist);
-                       // Toast.makeText(getApplicationContext(), "Lưu thành công " + playlist.getNamePlaylist(), Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(getApplicationContext(), "Lưu thành công " + playlist.getNamePlaylist(), Toast.LENGTH_SHORT).show();
 
                         dialog.dismiss();
                     }
@@ -144,10 +152,11 @@ public class PlaylistActivity extends AppCompatActivity {
         imgBtnBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentBackHome = new Intent(PlaylistActivity.this, HomeActivity.class);
+                Intent intentBackHome = new Intent(context, HomeActivity.class);
                 startActivity(intentBackHome);
             }
         });
+        return myFragmentView;
     }
 
 //    public boolean deleteDialog() {

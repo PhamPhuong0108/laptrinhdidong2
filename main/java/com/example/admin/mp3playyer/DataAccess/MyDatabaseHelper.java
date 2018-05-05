@@ -95,17 +95,19 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean checkSongExisted(String songName, String songAuthor, int songLength){
+    public boolean checkSongExisted(String songName, String songSinger, int songLength) {
 
         Log.i(TAG, "MyDatabaseHelper.DeleteAllSong ... ");
-        String sql = "SELECT * FROM " + TB_SONGS + " WHERE " + COL_SONG_NAME + "= '" + songName + "' AND " + COL_SONG_AUTHOR + "= '"+ songAuthor + "' AND " + COL_SONG_LENGTH + "=" + songLength;
+        String sql = "SELECT * FROM " + TB_SONGS + " WHERE " + COL_SONG_NAME + " = '" + songName + "' AND " + COL_SONG_SINGER + " = '" + songSinger + "' AND " + COL_SONG_LENGTH + " = " + songLength;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(sql, null);
-        if (cursor.moveToFirst()) return true;
-        return false;
+        if (cursor.moveToFirst())
+            return true;
+        else
+            return false;
     }
 
-    public void addSong(Song song){
+    public void addSong(Song song) {
         Log.i(TAG, "MyDatabaseHelper.addSONG ... " + song.getName());
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -122,7 +124,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void delAllSong(){
+    public void delAllSong() {
         Log.i(TAG, "MyDatabaseHelper.DeleteAllSong ... ");
         String sql = "DELETE FROM " + TB_SONGS;
 
@@ -133,7 +135,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<Song> getSongs() {
-        Log.i(TAG, "MyDatabaseHelper.getSONGS ... " );
+        Log.i(TAG, "MyDatabaseHelper.getSONGS ... ");
         ArrayList<Song> results = new ArrayList<Song>();
 
         String selectQuery = "SELECT  * FROM " + TB_SONGS;
@@ -162,21 +164,20 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //function add new playlist into db
-    public void addPlaylist(Playlist playlist)
-    {
+    public void addPlaylist(Playlist playlist) {
         Log.i(TAG, "MyDatabaseHelper.AddPlaylist ... " + playlist.getNamePlaylist());
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(COL_PLAYLIST_NAME, playlist.getNamePlaylist());
 
-        db.insert(TB_PLAYLISTS,null,values);
+        db.insert(TB_PLAYLISTS, null, values);
         db.close();
     }
 
     //function get all playlist in db
     public ArrayList<Playlist> getPlaylist() {
-        Log.i(TAG, "MyDatabaseHelper.GetPlaylist ... " );
+        Log.i(TAG, "MyDatabaseHelper.GetPlaylist ... ");
         ArrayList<Playlist> results = new ArrayList<Playlist>();
 
         String selectQuery = "SELECT  * FROM " + TB_PLAYLISTS;
@@ -201,9 +202,9 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //function delete playlist form db
-    public boolean deletePlaylist(int id){
+    public boolean deletePlaylist(int id) {
         Log.i(TAG, "MyDatabaseHelper.DeletePlaylist ... ");
-        String sql = "DELETE FROM " + TB_PLAYLISTS + " WHERE " + COL_PLAYLIST_ID + " = " + id ;
+        String sql = "DELETE FROM " + TB_PLAYLISTS + " WHERE " + COL_PLAYLIST_ID + " = " + id;
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(sql);
         db.close();
@@ -211,21 +212,20 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //function add new favourites into db
-    public void addFavourites(Playlist playlist)
-    {
+    public void addFavourites(Playlist playlist) {
         Log.i(TAG, "MyDatabaseHelper.AddPlaylist ... " + playlist.getNamePlaylist());
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(COL_FAVOURITE_ID, playlist.getNamePlaylist());
 
-        db.insert(TB_FAVOURITES,null,values);
+        db.insert(TB_FAVOURITES, null, values);
         db.close();
     }
 
     //function get all favourites in db
     public ArrayList<Playlist> getFavourites() {
-        Log.i(TAG, "MyDatabaseHelper.GetPlaylist ... " );
+        Log.i(TAG, "MyDatabaseHelper.GetPlaylist ... ");
         ArrayList<Playlist> results = new ArrayList<Playlist>();
 
         String selectQuery = "SELECT  * FROM " + TB_FAVOURITES;
@@ -250,9 +250,9 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //function delete favourites form db
-    public boolean deleteFavourites(int id){
+    public boolean deleteFavourites(int id) {
         Log.i(TAG, "MyDatabaseHelper.DeletePlaylist ... ");
-        String sql = "DELETE FROM " + TB_FAVOURITES + " WHERE " + COL_PLAYLIST_ID + " = " + id ;
+        String sql = "DELETE FROM " + TB_FAVOURITES + " WHERE " + COL_PLAYLIST_ID + " = " + id;
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(sql);
         db.close();

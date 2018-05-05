@@ -77,9 +77,11 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
+//                db.delAllSong();
                 readAllMusic();
+//                    db.getSongs();
                 // Move to home activity ->
-                Intent splashIntent = new Intent(SplashActivity.this, AllPlayList.class);
+                Intent splashIntent = new Intent(SplashActivity.this, NavActivity.class);
                 SplashActivity.this.startActivity(splashIntent);
                 finish();
             }
@@ -107,7 +109,7 @@ public class SplashActivity extends AppCompatActivity {
                     String singerName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                     int duration = Integer.parseInt(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)));
                     Song song = new Song(duration, songName, singerName, authorName, path);
-                    if (!db.checkSongExisted(songName, authorName, duration))
+                    if (!db.checkSongExisted(songName, singerName, duration))
                         db.addSong(song);
                 } while (cursor.moveToNext());
             }
