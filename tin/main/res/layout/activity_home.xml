@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:id="@+id/drawer_layout"
     android:fitsSystemWindows="true"
-    tools:context=".MainActivity"
+    tools:context="com.example.admin.mp3playyer.NavActivity"
     tools:openDrawer="start">
 
     <LinearLayout
@@ -18,10 +18,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@drawable/menu"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            android:elevation="4dp">
+            android:layout_marginLeft="-10dp"
+            android:layout_marginRight="-5dp"
+            android:background="@drawable/menu">
 
         </android.support.v7.widget.Toolbar>
 
@@ -35,9 +34,10 @@
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
+        android:background="@drawable/background"
         app:menu="@menu/drawer_menu"/>
 
 </android.support.v4.widget.DrawerLayout>
