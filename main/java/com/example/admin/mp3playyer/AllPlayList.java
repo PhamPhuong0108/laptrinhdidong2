@@ -7,10 +7,13 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+
+import java.io.Console;
 import java.util.ArrayList;
 import java.io.File;
 
@@ -35,7 +38,7 @@ public class AllPlayList extends AppCompatActivity {
     private ArrayList<Song> mListItems;
     private MyDatabaseHelper db;
     private TextView txtItem;
-    private Intent intent;
+    //private Intent intent;
     public static final String POSITION = "position";
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +56,17 @@ public class AllPlayList extends AppCompatActivity {
         playlistAdapter = new PlaylistAdapter(this, R.layout.activity_all_list_music, mListItems);
         lvAllList.setAdapter(playlistAdapter);
 
+        //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT).show();
+        //Log.i()
+
         lvAllList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                intent = new Intent(AllPlayList.this,ScreenPlayerActivity.class);
-                intent.putExtra(POSITION,String.valueOf(playlistAdapter.getItemId(position)));
+                Intent intent = new Intent(AllPlayList.this,ScreenPlayerActivity.class);
+                intent.putExtra("pos", position);
+                intent.putExtra("songLists", mListItems);
                 startActivity(intent);
+
             }
         });
 
@@ -66,13 +74,19 @@ public class AllPlayList extends AppCompatActivity {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent = new Intent(AllPlayList.this, HomeActivity.class);
+                Intent intent = new Intent(AllPlayList.this, HomeActivity.class);
                 startActivity(intent);
             }
         });
     }
 
-//    private void initComponents()
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+    }
+
+    //    private void initComponents()
 //    {
 //        permissionsRequest();
 //        initList();

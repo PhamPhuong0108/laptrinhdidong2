@@ -1,10 +1,12 @@
 package com.example.admin.mp3playyer;
 
+import java.io.Serializable;
+
 /**
  * Created by Admin on 09-Apr-18.
  */
 
-public class Song {
+public class Song implements Serializable {
     private int id, length;
     private  String name, singer, author, path;
 

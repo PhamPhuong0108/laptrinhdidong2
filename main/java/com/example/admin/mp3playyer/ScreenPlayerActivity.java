@@ -36,7 +36,7 @@ import java.util.Random;
 
 public class ScreenPlayerActivity extends AppCompatActivity {
     private TextView txtNameSong, txtTimeCurrent, txtTimeSong;
-    private Button  btnPre, btnPlay, btnNext, btnFavourite, btnShare,btnRepeat, btnShuffle;
+    private Button btnPre, btnPlay, btnNext, btnFavourite, btnShare, btnRepeat, btnShuffle;
     private SeekBar sbSong;
     private ImageView imvDics;
     private Animation animation;
@@ -47,25 +47,34 @@ public class ScreenPlayerActivity extends AppCompatActivity {
     private SharedPreferences sp;
     private MyDatabaseHelper db;
     private ArrayList<Song> arraySong;
-    private int position = 0;
-    private MediaPlayer mediaPlayer;
+    private int position;
+    private static MediaPlayer mediaPlayer;
     private Intent intent;
+    Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_player_layout);
+
         intent = getIntent();
-        position =Integer.parseInt(intent.getStringExtra(AllPlayList.POSITION));
-        intent = new Intent(this, MusicPlayer.class);
-        bindService(intent, connection, BIND_AUTO_CREATE);
-        Log.d("onCreate","a");
-        startService(intent);
+        Bundle bundle = intent.getExtras();
+        arraySong = (ArrayList) bundle.getParcelableArrayList("songLists");
+        //position = Integer.parseInt(intent.getStringExtra(AllPlayList.POSITION));
+        position = bundle.getInt("pos", 0);
+        Intent intentService = new Intent(this, MusicPlayer.class);
+        //db = new MyDatabaseHelper(this);
+        //arraySong = db.getSongs();
+        //bindService(intentService, connection, BIND_AUTO_CREATE);
+        //Log.d("onCreate","a");
+        //startService(intentService);
+
         initViews();
         loadControl();
-        rand=new Random();
-        animation = AnimationUtils.loadAnimation(this,R.anim.disc_rotate);
+        rand = new Random();
+        animation = AnimationUtils.loadAnimation(this, R.anim.disc_rotate);
         startMediaPlayer();
+        mediaPlayer.start();
         btnPlay.setBackgroundResource(R.drawable.pause);
         setTimeTotal();
         updateTimeCurrent();
@@ -75,11 +84,11 @@ public class ScreenPlayerActivity extends AppCompatActivity {
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mediaPlayer.isPlaying()){
+                if (mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
                     btnPlay.setBackgroundResource(R.drawable.play);
                     imvDics.clearAnimation();
-                }else {
+                } else {
                     mediaPlayer.start();
                     btnPlay.setBackgroundResource(R.drawable.pause);
                     setTimeTotal();
@@ -92,10 +101,9 @@ public class ScreenPlayerActivity extends AppCompatActivity {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shuffleSong();
-                if (mediaPlayer.isPlaying()){
+                shuffleSong("next");
+                if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
-                    mediaPlayer.release();
                 }
                 startMediaPlayer();
                 mediaPlayer.start();
@@ -109,20 +117,9 @@ public class ScreenPlayerActivity extends AppCompatActivity {
         btnPre.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(shuffle){
-                    int newSong = position;
-                    while(newSong==position){
-                        newSong=rand.nextInt(arraySong.size());
-                    }
-                    position=newSong;
-                }
-                else{
-                    position--;
-                    if(position < 0) position=arraySong.size()-1;
-                }
-                if (mediaPlayer.isPlaying()){
+                shuffleSong("pre");
+                if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
-                    mediaPlayer.release();
                 }
                 startMediaPlayer();
                 mediaPlayer.start();
@@ -139,7 +136,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                 if (shuffle) {
                     Toast.makeText(getApplicationContext(), "Not shuffle", Toast.LENGTH_SHORT).show();
                     btnShuffle.setBackgroundResource(R.drawable.shuffle);
-                }else {
+                } else {
                     Toast.makeText(getApplicationContext(), "Shuffle", Toast.LENGTH_SHORT).show();
                     btnShuffle.setBackgroundResource(R.drawable.shuffle2);
                 }
@@ -176,7 +173,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
         btnFavourite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // db.get
+                // db.get
             }
         });
 
@@ -203,26 +200,24 @@ public class ScreenPlayerActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             // nhan ket qua tro ve
-            Log.d("onServiceConnected","a");
+            Log.d("onServiceConnected", "a");
             MusicPlayer.MyBinderMedia media = (MusicPlayer.MyBinderMedia) iBinder;
             musicPlayer = media.getService();
 //            mediaPlayer = musicPlayer.getMediaPlayer();
-            if (musicPlayer.getMediaPlayer()!=null)
-            {
-            if (musicPlayer.getMediaPlayer().isPlaying())
-            {
-                musicPlayer.getMediaPlayer().pause();
+            if (musicPlayer.getMediaPlayer() != null) {
+                if (musicPlayer.getMediaPlayer().isPlaying()) {
+                    musicPlayer.getMediaPlayer().pause();
+                } else {
+                    Toast.makeText(getApplicationContext(), "AAAAAAAAAAAAAAAAAA", Toast.LENGTH_SHORT).show();
+                }
             }
-            else{
-                Toast.makeText(getApplicationContext(), "AAAAAAAAAAAAAAAAAA", Toast.LENGTH_SHORT).show();
-            }}
 
 
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            Log.d("onServiceDisconnected","a");
+            Log.d("onServiceDisconnected", "a");
         }
     };
 
@@ -231,7 +226,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
     protected void onDestroy() {
         saveControl();
         super.onDestroy();
-        unbindService(connection);
+//        unbindService(connection);
     }
 
     @Override
@@ -240,21 +235,20 @@ public class ScreenPlayerActivity extends AppCompatActivity {
     }
 
     //Repeat
-    private void repeatSong()
-    {
+    private void repeatSong() {
         switch (repeat) {
             case 0:
                 //check time finish
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        if(shuffle){
+                        if (shuffle) {
                             int newSong = position;
-                            while(newSong==position){
-                                newSong=rand.nextInt(arraySong.size());
+                            while (newSong == position) {
+                                newSong = rand.nextInt(arraySong.size());
                             }
-                            position=newSong;
-                            if (mediaPlayer.isPlaying()){
+                            position = newSong;
+                            if (mediaPlayer.isPlaying()) {
                                 mediaPlayer.stop();
                                 mediaPlayer.release();
                             }
@@ -263,18 +257,17 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                             btnPlay.setBackgroundResource(R.drawable.pause);
                             setTimeTotal();
                             updateTimeCurrent();
-                        }
-                        else{
+                        } else {
                             position++;
-                            if(position==arraySong.size()) {
-                                position=0;
+                            if (position == arraySong.size()) {
+                                position = 0;
                                 startMediaPlayer();
                                 animation.cancel();
                                 mediaPlayer.start();
                                 mediaPlayer.stop();
                                 btnPlay.setBackgroundResource(R.drawable.play);
-                            }else {
-                                if (mediaPlayer.isPlaying()){
+                            } else {
+                                if (mediaPlayer.isPlaying()) {
                                     mediaPlayer.stop();
                                     mediaPlayer.release();
                                 }
@@ -307,10 +300,9 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        shuffleSong();
-                        if (mediaPlayer.isPlaying()){
+                        shuffleSong("next");
+                        if (mediaPlayer.isPlaying()) {
                             mediaPlayer.stop();
-                            mediaPlayer.release();
                         }
                         startMediaPlayer();
                         mediaPlayer.start();
@@ -326,17 +318,21 @@ public class ScreenPlayerActivity extends AppCompatActivity {
     }
 
     //Trộn bài hát.
-    private void shuffleSong(){
-        if(shuffle){
+    private void shuffleSong(String type) {
+        if (shuffle) {
             int newSong = position;
-            while(newSong==position){
-                newSong=rand.nextInt(arraySong.size());
+            while (newSong == position) {
+                newSong = rand.nextInt(arraySong.size());
             }
-            position=newSong;
-        }
-        else{
-            position++;
-            if(position==arraySong.size()) position=0;
+            position = newSong;
+        } else {
+            if (type == "next") {
+                position++;
+                if (position >= arraySong.size()) position = 0;
+            } else {
+                position--;
+                if (position < 0) position = arraySong.size() - 1;
+            }
         }
     }
 
@@ -369,7 +365,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
     }
 
     //Lấy ra thời gian hiện tại của bài hát
-    private void updateTimeCurrent(){
+    private void updateTimeCurrent() {
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -381,13 +377,13 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                 sbSong.setProgress(mediaPlayer.getCurrentPosition());
                 repeatSong();
                 //Sau  5s tự động lặp lại kiểm tra time current
-                handler.postDelayed(this,500);
+                handler.postDelayed(this, 500);
             }
-        },100);
+        }, 100);
     }
 
     //Tổng thời gian của bài hát
-    private void setTimeTotal(){
+    private void setTimeTotal() {
         SimpleDateFormat fomatTime = new SimpleDateFormat("mm:ss");
         txtTimeSong.setText(fomatTime.format(mediaPlayer.getDuration()));
         //get time total
@@ -395,9 +391,13 @@ public class ScreenPlayerActivity extends AppCompatActivity {
     }
 
     //Khởi tạo media
-    private void startMediaPlayer(){
-        Uri uri = Uri.parse(arraySong.get(position).getPath());
-        mediaPlayer = MediaPlayer.create(ScreenPlayerActivity.this,uri);
+    private void startMediaPlayer() {
+        if (mediaPlayer != null) {
+            //mediaPlayer.stop();
+            mediaPlayer.release();
+        }
+        uri = Uri.parse(arraySong.get(position).getPath());
+        mediaPlayer = MediaPlayer.create(ScreenPlayerActivity.this, uri);
         txtNameSong.setText(arraySong.get(position).getName());
     }
 
@@ -417,8 +417,8 @@ public class ScreenPlayerActivity extends AppCompatActivity {
         imvDics = (ImageView) findViewById(R.id.imvDisk);
     }
 
-    public void setShuffle(){
-        if(shuffle) shuffle=false;
-        else shuffle=true;
+    public void setShuffle() {
+        if (shuffle) shuffle = false;
+        else shuffle = true;
     }
-   }
+}
