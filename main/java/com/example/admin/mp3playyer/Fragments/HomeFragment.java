@@ -57,7 +57,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 //                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new SearchFragment()).addToBackStack(null).commit();
                 break;
             case R.id.btnFavourite:
-
+                //getFragmentManager().beginTransaction().replace(R.id.fragment_container, new AllMusicsFragment()).addToBackStack(null).commit();
+                AllMusicsFragment allMusicsFragment = new AllMusicsFragment();
+                allMusicsFragment.setListType("favourite");
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, allMusicsFragment).commit();
                 break;
         }
     }
