@@ -1,30 +1,27 @@
 package com.example.admin.mp3playyer.Adapters;
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.admin.mp3playyer.Playlist;
+import com.example.admin.mp3playyer.Classes.Playlist;
+import com.example.admin.mp3playyer.DataAccess.MyDatabaseHelper;
 import com.example.admin.mp3playyer.R;
-import com.example.admin.mp3playyer.Song;
+
+import org.w3c.dom.Text;
 
 public class AddPlaylistAdapter extends ArrayAdapter<Playlist>{
     private Context mContext;
     private int listPosititon;
     private ArrayList<Playlist> playlistList;
     private LayoutInflater inflater;
+    private MyDatabaseHelper db = new MyDatabaseHelper(getContext());
 
     public AddPlaylistAdapter(Context context, int resources, ArrayList<Playlist> object) {
         super(context, resources, object);
@@ -35,6 +32,7 @@ public class AddPlaylistAdapter extends ArrayAdapter<Playlist>{
 
     class Holder {
         TextView playlist;
+        TextView txtcountSong;
     }
 
     @Override
@@ -59,9 +57,10 @@ public class AddPlaylistAdapter extends ArrayAdapter<Playlist>{
         if (convertView == null) {
             holder = new Holder();
             inflater = LayoutInflater.from(mContext);
-            convertView = inflater.inflate(R.layout.activity_items_playlist, parent, false);
+            convertView = inflater.inflate(R.layout.custom_adapter_item_playlist, parent, false);
 
             holder.playlist = (TextView) convertView.findViewById(R.id.txtItems);
+            holder.txtcountSong = (TextView) convertView.findViewById(R.id.txtCountSong);
             convertView.setTag(holder);
 
         } else {
@@ -75,6 +74,8 @@ public class AddPlaylistAdapter extends ArrayAdapter<Playlist>{
         } else {
             holder.playlist.setText("");
         }
+
+        holder.txtcountSong.setText(db.countSongInPlaylist(myPlaylist.getIdPlaylist()) + " bài hát");
 
         return convertView;
     }

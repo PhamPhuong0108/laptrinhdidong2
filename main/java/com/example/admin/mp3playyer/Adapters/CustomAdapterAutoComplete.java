@@ -1,7 +1,6 @@
 package com.example.admin.mp3playyer.Adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
@@ -11,19 +10,17 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.admin.mp3playyer.R;
-import com.example.admin.mp3playyer.Song;
+import com.example.admin.mp3playyer.Classes.Song;
 
 import java.io.File;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -88,7 +85,7 @@ public class CustomAdapterAutoComplete extends ArrayAdapter<Song> {
                 for (Song customer : itemsAll) {
                     String songName = removeAccent(customer.getName().toLowerCase());
                     String searchString = removeAccent(constraint.toString().toLowerCase());
-                    if (songName.contains(searchString) && countSuggestions <= 6) {
+                    if (songName.contains(searchString) && countSuggestions <= 4) {
                         suggestions.add(customer);
                         countSuggestions++;
                     }

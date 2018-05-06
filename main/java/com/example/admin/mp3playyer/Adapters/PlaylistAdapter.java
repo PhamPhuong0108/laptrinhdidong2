@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.admin.mp3playyer.R;
-import com.example.admin.mp3playyer.Song;
+import com.example.admin.mp3playyer.Classes.Song;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class PlaylistAdapter extends BaseAdapter {
         Holder holder;
         if (convertView == null) {
             holder = new Holder();
-            convertView = inflater.inflate(R.layout.activity_item_list_music, parent, false);
+            convertView = inflater.inflate(R.layout.custom_adapter_item_list_music, parent, false);
             holder.imgHinh = (ImageView) convertView.findViewById(R.id.imgIcon);
             holder.txtTitle = (TextView) convertView.findViewById(R.id.txtTitle);
             holder.txtCasi = (TextView) convertView.findViewById(R.id.txtCaSi);

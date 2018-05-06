@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.admin.mp3playyer.Playlist;
-import com.example.admin.mp3playyer.Song;
+import com.example.admin.mp3playyer.Classes.Playlist;
+import com.example.admin.mp3playyer.Classes.Song;
 
 import java.util.ArrayList;
 
@@ -95,6 +95,9 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    // Playlist detail
+
+
     public boolean checkSongExisted(String songName, String songSinger, int songLength) {
         try {
             Log.i(TAG, "MyDatabaseHelper.DeleteAllSong ... ");
@@ -105,8 +108,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 return true;
             else
                 return false;
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -138,12 +140,12 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ArrayList<Song> getSongs() {
+    public ArrayList<Song> getSongs(int getType) {
         Log.i(TAG, "MyDatabaseHelper.getSONGS ... ");
         ArrayList<Song> results = new ArrayList<Song>();
-
         String selectQuery = "SELECT  * FROM " + TB_SONGS;
-
+        if (getType == 1)
+            selectQuery = "SELECT  * FROM " + TB_SONGS + " INNER JOIN " + TB_FAVOURITES + " ON " + COL_FAVOURITE_SONG_ID + "=" + COL_SONG_ID;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -167,6 +169,37 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         return results;
     }
 
+    // Get favourite state
+    public boolean getFavouriteState(int songID) {
+        try {
+            String selectQuery = "SELECT  * FROM " + TB_FAVOURITES + " WHERE " + COL_FAVOURITE_SONG_ID + " = " + songID;
+
+            SQLiteDatabase db = this.getWritableDatabase();
+            Cursor cursor = db.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                return true;
+            }
+
+            return false;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    // Set Favourite
+    public void setFavourite(int songId, boolean isFavourite) {
+        try {
+            if (isFavourite) {
+                addFavourites(songId);
+            } else {
+                deleteFavourites(songId);
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "setFavourite: " + ex.getMessage());
+        }
+    }
+
     //function add new playlist into db
     public void addPlaylist(Playlist playlist) {
         Log.i(TAG, "MyDatabaseHelper.AddPlaylist ... " + playlist.getNamePlaylist());
@@ -177,6 +210,20 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
         db.insert(TB_PLAYLISTS, null, values);
         db.close();
+    }
+
+    public int countSongInPlaylist(int playlistID) {
+        try {
+            String countQuery = "SELECT COUNT(" + COL_PLAYLIST_DETAIL_SONG_ID + ") FROM " + TB_PLAYLIST_DETAILS + " WHERE " + COL_PLAYLIST_DETAIL_PLAYLISTS_ID + " = " + playlistID;
+            SQLiteDatabase db = this.getWritableDatabase();
+            Cursor cursor = db.rawQuery(countQuery, null);
+            if (cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+            return 0;
+        } catch (Exception ex) {
+            return 0;
+        }
     }
 
     //function get all playlist in db
@@ -216,12 +263,12 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //function add new favourites into db
-    public void addFavourites(Playlist playlist) {
-        Log.i(TAG, "MyDatabaseHelper.AddPlaylist ... " + playlist.getNamePlaylist());
+    public void addFavourites(int songID) {
+        Log.i(TAG, "MyDatabaseHelper.AddPlaylist ... " + songID);
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COL_FAVOURITE_ID, playlist.getNamePlaylist());
+        values.put(COL_FAVOURITE_SONG_ID, songID);
 
         db.insert(TB_FAVOURITES, null, values);
         db.close();
@@ -254,13 +301,12 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //function delete favourites form db
-    public boolean deleteFavourites(int id) {
+    public void deleteFavourites(int songID) {
         Log.i(TAG, "MyDatabaseHelper.DeletePlaylist ... ");
-        String sql = "DELETE FROM " + TB_FAVOURITES + " WHERE " + COL_PLAYLIST_ID + " = " + id;
+        String sql = "DELETE FROM " + TB_FAVOURITES + " WHERE " + COL_FAVOURITE_SONG_ID + " = " + songID;
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(sql);
         db.close();
-        return false;
     }
 
 }

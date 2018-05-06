@@ -3,13 +3,11 @@ package com.example.admin.mp3playyer;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -18,20 +16,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.admin.mp3playyer.Classes.Song;
 import com.example.admin.mp3playyer.DataAccess.MyDatabaseHelper;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class SplashActivity extends AppCompatActivity {
     public static final int RUNTIME_PERMISSION_CODE = 7;
@@ -86,7 +77,7 @@ public class SplashActivity extends AppCompatActivity {
                 readAllMusic();
 //                    db.getSongs();
                 // Move to home activity ->
-                Intent splashIntent = new Intent(SplashActivity.this, NavActivity.class);
+                Intent splashIntent = new Intent(SplashActivity.this, MainActivity.class);
                 SplashActivity.this.startActivity(splashIntent);
                 finish();
             }

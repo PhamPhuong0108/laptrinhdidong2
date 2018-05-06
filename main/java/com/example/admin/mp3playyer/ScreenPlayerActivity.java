@@ -1,20 +1,15 @@
 package com.example.admin.mp3playyer;
 
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,9 +22,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.admin.mp3playyer.Classes.Song;
 import com.example.admin.mp3playyer.DataAccess.MyDatabaseHelper;
+import com.example.admin.mp3playyer.Services.MusicPlayerService;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
@@ -41,7 +37,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
     private SeekBar sbSong;
     private ImageView imvDics;
     private Animation animation;
-    private MusicPlayer musicPlayer;
+    private MusicPlayerService musicPlayerService;
     private int repeat = 0;
     private boolean shuffle = false;
     private Random rand;
@@ -52,7 +48,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
     private static MediaPlayer mediaPlayer;
     private Intent intent;
     Uri uri;
-
+    private int songID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,14 +61,16 @@ public class ScreenPlayerActivity extends AppCompatActivity {
         arraySong = (ArrayList) bundle.getParcelableArrayList("songLists");
         //position = Integer.parseInt(intent.getStringExtra(AllPlayList.POSITION));
         position = bundle.getInt("pos", 0);
-        Intent intentService = new Intent(this, MusicPlayer.class);
+        Intent intentService = new Intent(this, MusicPlayerService.class);
         //db = new MyDatabaseHelper(this);
         //arraySong = db.getSongs();
         //bindService(intentService, connection, BIND_AUTO_CREATE);
         //Log.d("onCreate","a");
         //startService(intentService);
-
+        db = new MyDatabaseHelper(getApplicationContext());
+        songID = arraySong.get(position).getId();
         initViews();
+        getFavoriteState();
         loadControl();
         rand = new Random();
         animation = AnimationUtils.loadAnimation(this, R.anim.disc_rotate);
@@ -86,6 +84,8 @@ public class ScreenPlayerActivity extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intentResult = new Intent();
+                setResult(Activity.RESULT_OK, intentResult);
                 finish();
             }
         });
@@ -184,6 +184,8 @@ public class ScreenPlayerActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // db.get
+                db.setFavourite(songID, !getFavoriteState());
+                getFavoriteState();
             }
         });
 
@@ -205,18 +207,27 @@ public class ScreenPlayerActivity extends AppCompatActivity {
         });
     }
 
+    private boolean getFavoriteState(){
+        boolean favouriteState = db.getFavouriteState(songID);
+        if (!favouriteState)
+            btnFavourite.setBackgroundResource(R.drawable.favorite1);
+        else
+            btnFavourite.setBackgroundResource(R.drawable.favorite2);
+        return favouriteState;
+    }
+
     //tao ket noi service
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             // nhan ket qua tro ve
             Log.d("onServiceConnected", "a");
-            MusicPlayer.MyBinderMedia media = (MusicPlayer.MyBinderMedia) iBinder;
-            musicPlayer = media.getService();
-//            mediaPlayer = musicPlayer.getMediaPlayer();
-            if (musicPlayer.getMediaPlayer() != null) {
-                if (musicPlayer.getMediaPlayer().isPlaying()) {
-                    musicPlayer.getMediaPlayer().pause();
+            MusicPlayerService.MyBinderMedia media = (MusicPlayerService.MyBinderMedia) iBinder;
+            musicPlayerService = media.getService();
+//            mediaPlayer = musicPlayerService.getMediaPlayer();
+            if (musicPlayerService.getMediaPlayer() != null) {
+                if (musicPlayerService.getMediaPlayer().isPlaying()) {
+                    musicPlayerService.getMediaPlayer().pause();
                 } else {
                     Toast.makeText(getApplicationContext(), "AAAAAAAAAAAAAAAAAA", Toast.LENGTH_SHORT).show();
                 }
