@@ -23,7 +23,7 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer
@@ -44,10 +44,10 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeActivity()).commit();
                 break;
             case R.id.nav_playlist:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PlaylistActivity()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PlayListFragment()).commit();
                 break;
             case R.id.nav_search:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeActivity()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SearchFragment()).commit();
                 break;
             case R.id.nav_favourite:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeActivity()).commit();

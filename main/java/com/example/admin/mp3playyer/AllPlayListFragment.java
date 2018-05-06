@@ -1,6 +1,7 @@
 package com.example.admin.mp3playyer;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,30 +9,23 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
-
-import java.io.Console;
-import java.util.ArrayList;
-import java.io.File;
-
-import android.os.Environment;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.admin.mp3playyer.Adapters.PlaylistAdapter;
 import com.example.admin.mp3playyer.DataAccess.MyDatabaseHelper;
 
+import java.io.File;
+import java.util.ArrayList;
 
-public class AllPlayList extends AppCompatActivity {
+public class AllPlayListFragment extends Fragment {
     private ImageButton imgBack;
     private ListView lvAllList;
     private String[] items;
@@ -44,23 +38,25 @@ public class AllPlayList extends AppCompatActivity {
     private ArrayList<Song> mListItems;
     private MyDatabaseHelper db;
     private TextView txtItem;
+    private Context context;
     //private Intent intent;
     public static final String POSITION = "position";
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View myFragmentView = inflater.inflate(R.layout.activity_all_list_music, container, false);
 
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_list_music);
-
+        context = getContext();
         //imgBack = (ImageButton) findViewById(R.id.imgBtnBack);
-        txtItem = (TextView) findViewById(R.id.txtTitle);
+        txtItem = (TextView) myFragmentView.findViewById(R.id.txtTitle);
 
         //initComponents();
-        lvAllList = (ListView) findViewById(R.id.lvAllPlaylist);
+        lvAllList = (ListView) myFragmentView.findViewById(R.id.lvAllPlaylist);
         permissionsRequest();
-        db = new MyDatabaseHelper(this);
+        db = new MyDatabaseHelper(context);
         mListItems = db.getSongs();
-        playlistAdapter = new PlaylistAdapter(this, R.layout.activity_all_list_music, mListItems);
+        playlistAdapter = new PlaylistAdapter(context, R.layout.activity_all_list_music, mListItems);
         lvAllList.setAdapter(playlistAdapter);
 
         //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT).show();
@@ -69,10 +65,19 @@ public class AllPlayList extends AppCompatActivity {
         lvAllList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(AllPlayList.this,ScreenPlayerActivity.class);
+                Intent intent = new Intent(context, ScreenPlayerActivity.class);
                 intent.putExtra("pos", position);
                 intent.putExtra("songLists", mListItems);
                 startActivity(intent);
+//                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new ScreenPlayerFragment()).addToBackStack(null).commit();
+
+
+//                Fragment fragment = new Fragment();
+//                Bundle bundle = new Bundle();
+//                bundle.putInt("pos", position);
+//                //bundle.putStringArrayList("songLists", mListItems);
+//                fragment.setArguments(bundle);
+//                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new ScreenPlayerFragment()).addToBackStack(null).commit();
 
             }
         });
@@ -85,10 +90,12 @@ public class AllPlayList extends AppCompatActivity {
 //                startActivity(intent);
 //            }
 //        });
+
+        return myFragmentView;
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
     }
@@ -121,19 +128,18 @@ public class AllPlayList extends AppCompatActivity {
 
     public void permissionsRequest() {
 
-        if (ContextCompat.checkSelfPermission(this,
+        if (ContextCompat.checkSelfPermission(context,
                 Manifest.permission.INTERNET)
-                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(context,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED ||ContextCompat.checkSelfPermission(this,
+                != PackageManager.PERMISSION_GRANTED ||ContextCompat.checkSelfPermission(context,
                 Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
+            ActivityCompat.requestPermissions((Activity) context,
                     new String[]{Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 111);
 
         }
     }
-
 }

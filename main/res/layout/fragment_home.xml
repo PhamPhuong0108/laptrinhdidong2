@@ -43,7 +43,7 @@
                 android:scaleType="fitXY"
                 android:layout_width="150dp"
                 android:layout_height="50dp"
-                android:layout_toRightOf="@id/btnHome"
+                android:layout_toRightOf="@+id/btnHome"
                 android:layout_marginLeft="20dp"
                 android:src="@drawable/playlist"
                 android:background="#0000"
@@ -57,9 +57,9 @@
                 android:layout_height="50dp"
                 android:src="@drawable/search"
                 android:layout_marginTop="20dp"
-                android:layout_below="@id/btnHome"
+                android:layout_below="@+id/btnHome"
                 android:background="#0000"
-                android:layout_alignLeft="@id/btnHome"
+                android:layout_alignLeft="@+id/btnHome"
                 android:layout_marginRight="20dp"
                 />
             <ImageButton
@@ -67,9 +67,9 @@
                 android:scaleType="fitXY"
                 android:layout_width="150dp"
                 android:layout_height="50dp"
-                android:layout_toRightOf="@id/btnSearch"
-                android:layout_below="@id/btnPlaylist"
-                android:layout_alignTop="@id/btnSearch"
+                android:layout_toRightOf="@+id/btnSearch"
+                android:layout_below="@+id/btnPlaylist"
+                android:layout_alignTop="@+id/btnSearch"
                 android:src="@drawable/fv"
                 android:background="#0000"
                 />

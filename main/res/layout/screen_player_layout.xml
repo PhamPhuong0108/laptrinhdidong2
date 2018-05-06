@@ -7,25 +7,28 @@
     android:orientation="vertical"
     android:background="@drawable/background"
     tools:context=".">
-    <LinearLayout
+
+    <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#000">
+        android:layout_height="@dimen/height_Toolbar"
+        android:layout_marginLeft="-10dp"
+        android:layout_marginRight="-5dp"
+        android:background="@drawable/menu">
 
-        <Button
-            android:id="@+id/btnMenu"
-            android:layout_width="38dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/menu_icon"
-            android:layout_margin="8dp"/>
+        <ImageButton
+            android:id="@+id/imgBtnBack"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="?android:selectableItemBackground"
+            android:layout_gravity="left"
+            android:scaleType="fitXY"
+            android:src="@drawable/left_arrow"/>
+    </android.support.v7.widget.Toolbar>
 
-    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="13">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/imvDisk"
