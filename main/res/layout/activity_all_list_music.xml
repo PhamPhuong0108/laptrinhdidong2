@@ -9,32 +9,7 @@
     android:layout_weight="9"
     tools:context="com.example.admin.mp3playyer.SplashActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/height_Toolbar"
-        android:layout_marginLeft="-10dp"
-        android:layout_marginRight="-5dp"
-        android:background="@drawable/menu">
 
-        <ImageButton
-            android:id="@+id/imgBtnBack"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="?android:selectableItemBackground"
-            android:layout_gravity="left"
-            android:scaleType="fitXY"
-            android:src="@drawable/left_arrow"/>
-
-        <TextView
-            android:id="@+id/txtListMucsic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="24sp"
-            android:layout_marginLeft="5dp"
-            android:text="List Music"/>
-
-    </android.support.v7.widget.Toolbar>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

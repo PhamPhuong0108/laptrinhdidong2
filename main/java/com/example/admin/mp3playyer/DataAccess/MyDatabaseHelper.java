@@ -96,15 +96,19 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean checkSongExisted(String songName, String songSinger, int songLength) {
-
-        Log.i(TAG, "MyDatabaseHelper.DeleteAllSong ... ");
-        String sql = "SELECT * FROM " + TB_SONGS + " WHERE " + COL_SONG_NAME + " = '" + songName + "' AND " + COL_SONG_SINGER + " = '" + songSinger + "' AND " + COL_SONG_LENGTH + " = " + songLength;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(sql, null);
-        if (cursor.moveToFirst())
-            return true;
-        else
+        try {
+            Log.i(TAG, "MyDatabaseHelper.DeleteAllSong ... ");
+            String sql = "SELECT * FROM " + TB_SONGS + " WHERE " + COL_SONG_NAME + " = '" + songName + "' AND " + COL_SONG_SINGER + " = '" + songSinger + "' AND " + COL_SONG_LENGTH + " = " + songLength;
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(sql, null);
+            if (cursor.moveToFirst())
+                return true;
+            else
+                return false;
+        }
+        catch (Exception ex) {
             return false;
+        }
     }
 
     public void addSong(Song song) {

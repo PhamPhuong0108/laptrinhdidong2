@@ -1,24 +1,22 @@
 package com.example.admin.mp3playyer;
 
-import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.support.annotation.RequiresApi;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -29,15 +27,14 @@ import android.widget.Toast;
 
 import com.example.admin.mp3playyer.DataAccess.MyDatabaseHelper;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ScreenPlayerActivity extends AppCompatActivity {
+public class ScreenPlayerFragment extends Fragment {
+
     private TextView txtNameSong, txtTimeCurrent, txtTimeSong;
     private Button btnPre, btnPlay, btnNext, btnFavourite, btnShare, btnRepeat, btnShuffle;
-    private ImageView btnBack;
     private SeekBar sbSong;
     private ImageView imvDics;
     private Animation animation;
@@ -51,21 +48,23 @@ public class ScreenPlayerActivity extends AppCompatActivity {
     private int position;
     private static MediaPlayer mediaPlayer;
     private Intent intent;
+    private Context context;
+    private View myFragmentView;
     Uri uri;
-
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.screen_player_layout);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        myFragmentView = inflater.inflate(R.layout.screen_player_layout, container, false);
 
+        intent = getActivity().getIntent();
 
+        context = getContext();
 
-        intent = getIntent();
-        Bundle bundle = intent.getExtras();
+        Bundle bundle = getActivity().getIntent().getExtras();
         arraySong = (ArrayList) bundle.getParcelableArrayList("songLists");
         //position = Integer.parseInt(intent.getStringExtra(AllPlayList.POSITION));
         position = bundle.getInt("pos", 0);
-        Intent intentService = new Intent(this, MusicPlayer.class);
+        Intent intentService = new Intent(context, MusicPlayer.class);
         //db = new MyDatabaseHelper(this);
         //arraySong = db.getSongs();
         //bindService(intentService, connection, BIND_AUTO_CREATE);
@@ -75,20 +74,13 @@ public class ScreenPlayerActivity extends AppCompatActivity {
         initViews();
         loadControl();
         rand = new Random();
-        animation = AnimationUtils.loadAnimation(this, R.anim.disc_rotate);
+        animation = AnimationUtils.loadAnimation(context, R.anim.disc_rotate);
         startMediaPlayer();
         mediaPlayer.start();
-        btnPlay.setBackgroundResource(R.drawable.pause_icon);
+        btnPlay.setBackgroundResource(R.drawable.pause);
         setTimeTotal();
         updateTimeCurrent();
         imvDics.startAnimation(animation);
-
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
 
         //Xữ lý sự kiện
         btnPlay.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +92,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                     imvDics.clearAnimation();
                 } else {
                     mediaPlayer.start();
-                    btnPlay.setBackgroundResource(R.drawable.pause_icon);
+                    btnPlay.setBackgroundResource(R.drawable.pause);
                     setTimeTotal();
                     updateTimeCurrent();
                     imvDics.startAnimation(animation);
@@ -144,10 +136,10 @@ public class ScreenPlayerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (shuffle) {
-                    Toast.makeText(getApplicationContext(), "Not shuffle", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "Not shuffle", Toast.LENGTH_SHORT).show();
                     btnShuffle.setBackgroundResource(R.drawable.shuffle);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Shuffle", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "Shuffle", Toast.LENGTH_SHORT).show();
                     btnShuffle.setBackgroundResource(R.drawable.shuffle2);
                 }
                 setShuffle();
@@ -160,17 +152,17 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                 repeat = (++repeat) % 3;
                 switch (repeat) {
                     case 0:
-                        Toast.makeText(getApplicationContext(), "Not repeat", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), "Not repeat", Toast.LENGTH_SHORT).show();
                         btnRepeat.setBackgroundResource(R.drawable.repeat);
                         break;
 
                     case 1:
-                        Toast.makeText(getApplicationContext(), "Repeat one", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), "Repeat one", Toast.LENGTH_SHORT).show();
                         btnRepeat.setBackgroundResource(R.drawable.repeatone);
                         break;
 
                     case 2:
-                        Toast.makeText(getApplicationContext(), "Repeat all", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), "Repeat all", Toast.LENGTH_SHORT).show();
                         btnRepeat.setBackgroundResource(R.drawable.repeat2);
                         break;
 
@@ -203,6 +195,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                 mediaPlayer.seekTo(sbSong.getProgress());
             }
         });
+        return myFragmentView;
     }
 
     //tao ket noi service
@@ -218,7 +211,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
                 if (musicPlayer.getMediaPlayer().isPlaying()) {
                     musicPlayer.getMediaPlayer().pause();
                 } else {
-                    Toast.makeText(getApplicationContext(), "AAAAAAAAAAAAAAAAAA", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "AAAAAAAAAAAAAAAAAA", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -233,14 +226,14 @@ public class ScreenPlayerActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         saveControl();
         super.onDestroy();
 //        unbindService(connection);
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
     }
 
@@ -347,7 +340,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
     }
 
     private void loadControl() {
-        sp = (this.getSharedPreferences("Control", Context.MODE_PRIVATE));
+        sp = (context.getSharedPreferences("Control", Context.MODE_PRIVATE));
         SharedPreferences.Editor editor = sp.edit();
         shuffle = sp.getBoolean("Shuffle", false);
         repeat = sp.getInt("Repeat", 0);
@@ -362,7 +355,7 @@ public class ScreenPlayerActivity extends AppCompatActivity {
     }
 
     private void saveControl() {
-        sp = (this.getSharedPreferences("Control", Context.MODE_PRIVATE));
+        sp = (context.getSharedPreferences("Control", Context.MODE_PRIVATE));
         SharedPreferences.Editor editor = sp.edit();
         editor.remove("Shuffle");
         editor.commit();
@@ -407,25 +400,24 @@ public class ScreenPlayerActivity extends AppCompatActivity {
             mediaPlayer.release();
         }
         uri = Uri.parse(arraySong.get(position).getPath());
-        mediaPlayer = MediaPlayer.create(ScreenPlayerActivity.this, uri);
+        mediaPlayer = MediaPlayer.create(context, uri);
         txtNameSong.setText(arraySong.get(position).getName());
     }
 
     //Khai báo
     private void initViews() {
-        txtNameSong = (TextView) findViewById(R.id.nameSong);
-        txtTimeCurrent = (TextView) findViewById(R.id.timeCurrent);
-        txtTimeSong = (TextView) findViewById(R.id.totalTime);
-        btnNext = (Button) findViewById(R.id.btnNext);
-        btnPlay = (Button) findViewById(R.id.btnPlay);
-        btnPre = (Button) findViewById(R.id.btnPre);
-        //btnShare = (Button) findViewById(R.id.btnMenu);
-        btnRepeat = (Button) findViewById(R.id.btnRepeat);
-        btnShuffle = (Button) findViewById(R.id.btnShuffle);
-        btnFavourite = (Button) findViewById(R.id.btnFavourite);
-        sbSong = (SeekBar) findViewById(R.id.sbSong);
-        imvDics = (ImageView) findViewById(R.id.imvDisk);
-        btnBack = (ImageView) findViewById(R.id.imgBtnBack);
+        txtNameSong = (TextView) myFragmentView.findViewById(R.id.nameSong);
+        txtTimeCurrent = (TextView) myFragmentView.findViewById(R.id.timeCurrent);
+        txtTimeSong = (TextView) myFragmentView.findViewById(R.id.totalTime);
+        btnNext = (Button) myFragmentView.findViewById(R.id.btnNext);
+        btnPlay = (Button) myFragmentView.findViewById(R.id.btnPlay);
+        btnPre = (Button) myFragmentView.findViewById(R.id.btnPre);
+        //btnShare = (Button) myFragmentView.findViewById(R.id.btnMenu);
+        btnRepeat = (Button) myFragmentView.findViewById(R.id.btnRepeat);
+        btnShuffle = (Button) myFragmentView.findViewById(R.id.btnShuffle);
+        btnFavourite = (Button) myFragmentView.findViewById(R.id.btnFavourite);
+        sbSong = (SeekBar) myFragmentView.findViewById(R.id.sbSong);
+        imvDics = (ImageView) myFragmentView.findViewById(R.id.imvDisk);
     }
 
     public void setShuffle() {
