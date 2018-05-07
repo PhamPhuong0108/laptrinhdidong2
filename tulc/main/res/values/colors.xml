@@ -7,4 +7,6 @@
 
     <color name="colorBackgroundPlaylist">#151515</color>
     <color name="colorText">#dcd6d6</color>
+    <color name="backgroundColor">#000000</color>
+    <color name="cardBackground">#303030</color>
 </resources>
