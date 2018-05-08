@@ -98,6 +98,22 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     // Playlist detail
 
 
+    // Add song to an existed playlist
+    public void addSongToPlaylist(int songID, int playlistID) {
+        Log.i(TAG, "MyDatabaseHelper.addSongToPlaylist ... " + songID);
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COL_PLAYLIST_DETAIL_SONG_ID, songID);
+        values.put(COL_PLAYLIST_DETAIL_PLAYLISTS_ID, playlistID);
+
+        // Chèn một dòng dữ liệu vào bảng.
+        db.insert(TB_PLAYLIST_DETAILS, null, values);
+        // Đóng kết nối database.
+        db.close();
+    }
+
+    // check song existed
     public boolean checkSongExisted(String songName, String songSinger, int songLength) {
         try {
             Log.i(TAG, "MyDatabaseHelper.DeleteAllSong ... ");
@@ -201,15 +217,16 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //function add new playlist into db
-    public void addPlaylist(Playlist playlist) {
+    public long addPlaylist(Playlist playlist) {
         Log.i(TAG, "MyDatabaseHelper.AddPlaylist ... " + playlist.getNamePlaylist());
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(COL_PLAYLIST_NAME, playlist.getNamePlaylist());
 
-        db.insert(TB_PLAYLISTS, null, values);
+        long ID = db.insert(TB_PLAYLISTS, null, values);
         db.close();
+        return  ID;
     }
 
     public int countSongInPlaylist(int playlistID) {

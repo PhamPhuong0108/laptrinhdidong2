@@ -2,7 +2,7 @@
 <resources>
     <dimen name="height_Toolbar">45dp</dimen>
     <dimen name="sizeButton">50dp</dimen>
-    <dimen name="sizeText">16sp</dimen>
+    <dimen name="sizeText">18sp</dimen>
     <dimen name="sizeGirl">120dp</dimen>
     <dimen name="sizeDics">200dp</dimen>
     <dimen name="mgTopDisc">50dp</dimen>

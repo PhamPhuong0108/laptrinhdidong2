@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:id="@+id/popupMenu">
+
+        <item
+            android:id="@+id/itemAddPlaylist"
+            android:orderInCategory="1"
+            android:title="@string/txtAddPlaylist" />
+
+        <item
+            android:id="@+id/itemAddFavourites"
+            android:orderInCategory="1"
+            android:title="@string/txtYeuThich" />
+
+        <item
+            android:id="@+id/itemDelete"
+            android:orderInCategory="1"
+            android:title="Xóa" />
+
+        <item
+            android:id="@+id/itemShare"
+            android:orderInCategory="1"
+            android:title="Chia sẻ" />
+    </group>
+    <group android:orderInCategory="2" />
+</menu>

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.admin.mp3playyer.Adapters.AddPlaylistAdapter;
+import com.example.admin.mp3playyer.Adapters.PlaylistAdapter;
 import com.example.admin.mp3playyer.DataAccess.MyDatabaseHelper;
 import com.example.admin.mp3playyer.Classes.Playlist;
 import com.example.admin.mp3playyer.R;
@@ -37,8 +38,7 @@ public class PlayListFragment extends Fragment {
     private MyDatabaseHelper db;
     private TextView txtTitle, txtItemPlaylist;
     private Dialog dialog;
-    private
-    ArrayList<Playlist> myPlaylist = new ArrayList<>();
+    private ArrayList<Playlist> myPlaylist = new ArrayList<>();
 
     @Nullable
     @Override
@@ -54,7 +54,6 @@ public class PlayListFragment extends Fragment {
         //Load data form db and add new playlist into listview
         db = new MyDatabaseHelper(context);
         myPlaylist = db.getPlaylist();
-//        Toast.makeText(getApplicationContext(), myPlaylist.toString(), Toast.LENGTH_SHORT).show();
         playlistAdapter = new AddPlaylistAdapter(context, R.layout.activity_playlists_album, myPlaylist);
         myList.setAdapter(playlistAdapter);
 
@@ -91,6 +90,13 @@ public class PlayListFragment extends Fragment {
             }
         });
 
+        //If click item in listview -> show list all song in playlist
+        myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
 
 
         //adapter = new MyAdapter((Activity) mContext, list, context);
@@ -123,7 +129,7 @@ public class PlayListFragment extends Fragment {
                         String txtInput = txtInputPlaylist.getText().toString();
 
                         try {
-                            if(txtInput != null){
+                            if(!txtInput.isEmpty()){
                                 myPlaylist.add(new Playlist(txtInput));
                                 playlistAdapter.notifyDataSetChanged();
                                 Toast.makeText(context, txtInput.toString() + " đã được tạo thành công", Toast.LENGTH_SHORT).show();
@@ -131,12 +137,13 @@ public class PlayListFragment extends Fragment {
                                 //Add playlist into database
                                 Playlist playlist = new Playlist(txtInput);
                                 db.addPlaylist(playlist);
+
                             } else
                             {
-                                Toast.makeText(context, "Hãy nhập tên cần tạo", Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, "Hãy nhập tên Playlist cần tạo", Toast.LENGTH_LONG).show();
                             }
                         } catch (Exception ex){
-                            Toast.makeText(context, "Hãy nhập tên cần tạo", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Hãy nhập tên Playlist cần tạo", Toast.LENGTH_LONG).show();
                         }
 
                         dialog.dismiss();
