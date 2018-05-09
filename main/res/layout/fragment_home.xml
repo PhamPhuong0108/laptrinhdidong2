@@ -70,7 +70,7 @@
                 android:layout_toRightOf="@+id/btnSearch"
                 android:layout_below="@+id/btnPlaylist"
                 android:layout_alignTop="@+id/btnSearch"
-                android:src="@drawable/fv"
+                android:src="@drawable/favourite"
                 android:background="#0000"
                 />
         </RelativeLayout>

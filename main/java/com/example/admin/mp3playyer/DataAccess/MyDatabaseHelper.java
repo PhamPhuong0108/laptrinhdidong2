@@ -156,12 +156,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ArrayList<Song> getSongs(int getType) {
+    public ArrayList<Song> getSongs(int getType,int idPlayList) {
         Log.i(TAG, "MyDatabaseHelper.getSONGS ... ");
         ArrayList<Song> results = new ArrayList<Song>();
         String selectQuery = "SELECT  * FROM " + TB_SONGS;
         if (getType == 1)
             selectQuery = "SELECT  * FROM " + TB_SONGS + " INNER JOIN " + TB_FAVOURITES + " ON " + COL_FAVOURITE_SONG_ID + "=" + COL_SONG_ID;
+        if (getType == 2)
+            selectQuery = "SELECT  * FROM " + TB_SONGS + " INNER JOIN " + TB_PLAYLIST_DETAILS + " ON " + COL_PLAYLIST_DETAIL_SONG_ID + "=" + COL_SONG_ID + " WHERE " + COL_PLAYLIST_DETAIL_PLAYLISTS_ID + " = " + idPlayList ;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 

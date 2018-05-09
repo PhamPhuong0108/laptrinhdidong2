@@ -37,7 +37,7 @@ public class SearchActivity extends AppCompatActivity {
         btnSearch = (ImageButton) findViewById(R.id.btnSearch);
         btnBack = (ImageButton) findViewById(R.id.btnBack);
         db = new MyDatabaseHelper(this);
-        listSong = db.getSongs(0);
+        listSong = db.getSongs(0,0);
 
         customAdapterAutoComplete = new CustomAdapterAutoComplete(this, R.layout.custom_adapter_autocomplete, listSong);
         actv.setAdapter(customAdapterAutoComplete);

@@ -62,6 +62,7 @@ public class AllMusicsFragment extends Fragment {
     private MyDatabaseHelper db;
     private TextView txtItem;
     private Context context;
+    private int idPlayList = -1;
     private String listType = "all";
     //private Intent intent;
     public static final String POSITION = "position";
@@ -125,6 +126,7 @@ public class AllMusicsFragment extends Fragment {
         return myFragmentView;
     }
 
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_choice_playlist, menu);
@@ -133,7 +135,6 @@ public class AllMusicsFragment extends Fragment {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -281,10 +282,14 @@ public class AllMusicsFragment extends Fragment {
     private void loadMusicToList() {
         switch (listType) {
             case "favourite":
-                mListItems = db.getSongs(1);
+                mListItems = db.getSongs(1,0);
+                break;
+            case "playlist":
+                mListItems = db.getSongs(2,getIdPlayList());
                 break;
             default:
-                mListItems = db.getSongs(0);
+                mListItems = db.getSongs(0,0);
+                break;
         }
         playlistAdapter = new PlaylistAdapter(context, R.layout.activity_all_list_music, mListItems);
         lvAllList.setAdapter(playlistAdapter);
@@ -300,6 +305,13 @@ public class AllMusicsFragment extends Fragment {
         }
     }
 
+    public int getIdPlayList() {
+        return idPlayList;
+    }
+
+    public void setIdPlayList(int idPlayList) {
+        this.idPlayList = idPlayList;
+    }
 
     public String getListType() {
         return listType;

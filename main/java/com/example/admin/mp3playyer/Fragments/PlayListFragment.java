@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.admin.mp3playyer.Adapters.AddPlaylistAdapter;
 import com.example.admin.mp3playyer.Adapters.PlaylistAdapter;
+import com.example.admin.mp3playyer.Classes.Song;
 import com.example.admin.mp3playyer.DataAccess.MyDatabaseHelper;
 import com.example.admin.mp3playyer.Classes.Playlist;
 import com.example.admin.mp3playyer.R;
@@ -33,12 +34,14 @@ public class PlayListFragment extends Fragment {
     private Context mContext;
     private Button dialogButtonCancel, dlDeleteCancel;
     private Button dialogButtonOK, dlDeleteOK;
-    private AddPlaylistAdapter playlistAdapter;
+    private AddPlaylistAdapter addPlaylistAdapter;
+    private PlaylistAdapter playlistAdapter;
     private EditText txtInputPlaylist;
     private MyDatabaseHelper db;
     private TextView txtTitle, txtItemPlaylist;
     private Dialog dialog;
     private ArrayList<Playlist> myPlaylist = new ArrayList<>();
+    private ArrayList<Song> mListItems = new ArrayList<>();
 
     @Nullable
     @Override
@@ -54,8 +57,8 @@ public class PlayListFragment extends Fragment {
         //Load data form db and add new playlist into listview
         db = new MyDatabaseHelper(context);
         myPlaylist = db.getPlaylist();
-        playlistAdapter = new AddPlaylistAdapter(context, R.layout.activity_playlists_album, myPlaylist);
-        myList.setAdapter(playlistAdapter);
+        addPlaylistAdapter = new AddPlaylistAdapter(context, R.layout.activity_playlists_album, myPlaylist);
+        myList.setAdapter(addPlaylistAdapter);
 
         myList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -94,7 +97,10 @@ public class PlayListFragment extends Fragment {
         myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                AllMusicsFragment allMusicsFragment = new AllMusicsFragment();
+                allMusicsFragment.setListType("playlist");
+                allMusicsFragment.setIdPlayList(myPlaylist.get(position).getIdPlaylist());
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, allMusicsFragment).commit();
             }
         });
 
