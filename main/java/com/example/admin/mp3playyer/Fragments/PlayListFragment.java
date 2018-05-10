@@ -84,7 +84,7 @@ public class PlayListFragment extends Fragment {
                         db.deletePlaylist(myPlaylist.get(pos).getIdPlaylist());
                         myPlaylist.remove(pos);
                         Toast.makeText(context, "Xóa thành công ", Toast.LENGTH_SHORT).show();
-                        playlistAdapter.notifyDataSetChanged();
+                        addPlaylistAdapter.notifyDataSetChanged();
                         dialog.dismiss();
                     }
                 });
@@ -137,7 +137,7 @@ public class PlayListFragment extends Fragment {
                         try {
                             if(!txtInput.isEmpty()){
                                 myPlaylist.add(new Playlist(txtInput));
-                                playlistAdapter.notifyDataSetChanged();
+                                addPlaylistAdapter.notifyDataSetChanged();
                                 Toast.makeText(context, txtInput.toString() + " đã được tạo thành công", Toast.LENGTH_SHORT).show();
 
                                 //Add playlist into database
@@ -149,7 +149,7 @@ public class PlayListFragment extends Fragment {
                                 Toast.makeText(context, "Hãy nhập tên Playlist cần tạo", Toast.LENGTH_LONG).show();
                             }
                         } catch (Exception ex){
-                            Toast.makeText(context, "Hãy nhập tên Playlist cần tạo", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Không thể tạo Playlist", Toast.LENGTH_LONG).show();
                         }
 
                         dialog.dismiss();

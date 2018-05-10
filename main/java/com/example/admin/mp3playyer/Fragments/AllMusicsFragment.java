@@ -70,9 +70,6 @@ public class AllMusicsFragment extends Fragment {
     View myFragmentView;
     private int currentPosition;
 
-    private Button dialogButtonCancel;
-    private Button dialogButtonOK;
-    private Dialog dialogChoicePlaylist, dialogAddPlaylist;
     private ArrayList<Playlist> myPlaylist = new ArrayList<Playlist>();
     private TextView txtTitle;
     private EditText txtInputPlaylist;
@@ -159,6 +156,9 @@ public class AllMusicsFragment extends Fragment {
     }
 
     private void choicePlaylist() {
+        final Dialog dialogChoicePlaylist, dialogAddPlaylist;
+        Button btnAddToNewPlaylist;
+
         dialogChoicePlaylist = new Dialog(context);
         dialogChoicePlaylist.setContentView(R.layout.dialog_choice_playlist_album);
 
@@ -166,11 +166,7 @@ public class AllMusicsFragment extends Fragment {
         txtInputPlaylist = (EditText) dialogChoicePlaylist.findViewById(R.id.txtPlaylist);
 
         lvChoicePlaylist = (ListView) dialogChoicePlaylist.findViewById(R.id.lvPlaylist);
-
-        imgAdd = (ImageButton) dialogChoicePlaylist.findViewById(R.id.imgButtonAdd);
-
-        dialogButtonCancel = (Button) dialogChoicePlaylist.findViewById(R.id.dlButtonCancel);
-        dialogButtonOK = (Button) dialogChoicePlaylist.findViewById(R.id.dlButtonOK);
+        btnAddToNewPlaylist = (Button) dialogChoicePlaylist.findViewById(R.id.btnAddToNewPlaylist);
 
         db = new MyDatabaseHelper(context);
         myPlaylist = db.getPlaylist();
@@ -181,27 +177,11 @@ public class AllMusicsFragment extends Fragment {
         txtTitle.setText("Chọn Playlist:");
 
         //if button add is clicked, show dialog add playlist
-        imgAdd.setOnClickListener(new View.OnClickListener() {
+        btnAddToNewPlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialogChoicePlaylist.dismiss();
                 addPlaylistDialogShow();
-            }
-        });
-
-        // if button is clicked, close the custom dialog
-        dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogChoicePlaylist.dismiss();
-            }
-        });
-
-        //if button is clicked, add new playlist to listview at "Playlist" Display
-        dialogButtonOK.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialogChoicePlaylist.dismiss();
             }
         });
 
@@ -226,12 +206,12 @@ public class AllMusicsFragment extends Fragment {
     }
 
     private void addPlaylistDialogShow() {
-        dialogAddPlaylist = new Dialog(context);
+        final Dialog dialogAddPlaylist = new Dialog(context);
         dialogAddPlaylist.setContentView(R.layout.dialog_add_playlist_album);
         txtTitle = (TextView) dialogAddPlaylist.findViewById(R.id.txtTitle);
         txtInputPlaylist = (EditText) dialogAddPlaylist.findViewById(R.id.txtPlaylist);
-        dialogButtonCancel = (Button) dialogAddPlaylist.findViewById(R.id.dlButtonCancel);
-        dialogButtonOK = (Button) dialogAddPlaylist.findViewById(R.id.dlButtonOK);
+        Button dialogButtonCancel = (Button) dialogAddPlaylist.findViewById(R.id.dlButtonCancel);
+        Button dialogButtonOK = (Button) dialogAddPlaylist.findViewById(R.id.dlButtonOK);
 
         // set the custom dialog components - text, image and button
         txtTitle.setText("Tạo Playlist:");
@@ -258,14 +238,13 @@ public class AllMusicsFragment extends Fragment {
                         //Toast.makeText(context, txtInput.toString() + " đã được tạo thành công", Toast.LENGTH_SHORT).show();
                         //Add playlist into database
                         Playlist playlist = new Playlist(txtInput);
-                        int ID = (int)db.addPlaylist(playlist);
+                        int ID = (int) db.addPlaylist(playlist);
                         addSongToPlaylistByID(ID);
-                    } else
-                    {
+                    } else {
                         Toast.makeText(context, "Hãy nhập tên Playlist cần tạo", Toast.LENGTH_LONG).show();
                     }
                 } catch (Exception ex) {
-                    Toast.makeText(context, "Hãy nhập tên Playlist cần tạo", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Không thể tạo Playlist", Toast.LENGTH_LONG).show();
                 }
 
                 dialogAddPlaylist.dismiss();
@@ -275,20 +254,27 @@ public class AllMusicsFragment extends Fragment {
     }
 
     private void removedItem(int position) {
-        mListItems.remove(position);
-        playlistAdapter.notifyDataSetChanged();
+        int songID = mListItems.get(position).getId();
+        String songName = mListItems.get(position).getName();
+        if (db.deleteSongFromPlaylist(songID, idPlayList)) {
+            mListItems.remove(position);
+            playlistAdapter.notifyDataSetChanged();
+            Toast.makeText(getContext(), "Đã xóa bài hát: " + songName, Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(getContext(), "Không thể xóa bài hát: " + songName, Toast.LENGTH_SHORT).show();
+
     }
 
     private void loadMusicToList() {
         switch (listType) {
             case "favourite":
-                mListItems = db.getSongs(1,0);
+                mListItems = db.getSongs(1, 0);
                 break;
             case "playlist":
-                mListItems = db.getSongs(2,getIdPlayList());
+                mListItems = db.getSongs(2, getIdPlayList());
                 break;
             default:
-                mListItems = db.getSongs(0,0);
+                mListItems = db.getSongs(0, 0);
                 break;
         }
         playlistAdapter = new PlaylistAdapter(context, R.layout.activity_all_list_music, mListItems);

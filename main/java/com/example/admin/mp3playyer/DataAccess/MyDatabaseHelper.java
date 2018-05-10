@@ -97,26 +97,61 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     // Playlist detail
 
+    //delete a song from playlist
+    public boolean deleteSongFromPlaylist(int songID, int playlistID) {
+        try {
+
+            Log.i(TAG, "MyDatabaseHelper.deleteSongFromPlaylist ... ");
+            String sql = "DELETE FROM " + TB_PLAYLIST_DETAILS + " WHERE " + COL_PLAYLIST_DETAIL_SONG_ID + " = " + songID + " AND " + COL_PLAYLIST_DETAIL_PLAYLISTS_ID + " = " + playlistID;
+
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL(sql);
+            // Đóng kết nối database.
+            db.close();
+            return true;
+
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    // check song existed in playlist
+    public boolean checkSongExistedInPlaylist(int songID, int playlistID) {
+        try {
+            Log.i(TAG, "MyDatabaseHelper.checkSongExistedInPlaylist ... ");
+            String sql = "SELECT * FROM " + TB_PLAYLIST_DETAILS + " WHERE " + COL_PLAYLIST_DETAIL_SONG_ID + " = " + songID + " AND " + COL_PLAYLIST_DETAIL_PLAYLISTS_ID + " = " + playlistID;
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(sql, null);
+            if (cursor.moveToFirst())
+                return true;
+            else
+                return false;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
 
     // Add song to an existed playlist
     public void addSongToPlaylist(int songID, int playlistID) {
-        Log.i(TAG, "MyDatabaseHelper.addSongToPlaylist ... " + songID);
-        SQLiteDatabase db = this.getWritableDatabase();
+        if (!checkSongExistedInPlaylist(songID, playlistID)) {
+            Log.i(TAG, "MyDatabaseHelper.addSongToPlaylist ... " + songID);
+            SQLiteDatabase db = this.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(COL_PLAYLIST_DETAIL_SONG_ID, songID);
-        values.put(COL_PLAYLIST_DETAIL_PLAYLISTS_ID, playlistID);
+            ContentValues values = new ContentValues();
+            values.put(COL_PLAYLIST_DETAIL_SONG_ID, songID);
+            values.put(COL_PLAYLIST_DETAIL_PLAYLISTS_ID, playlistID);
 
-        // Chèn một dòng dữ liệu vào bảng.
-        db.insert(TB_PLAYLIST_DETAILS, null, values);
-        // Đóng kết nối database.
-        db.close();
+            // Chèn một dòng dữ liệu vào bảng.
+            db.insert(TB_PLAYLIST_DETAILS, null, values);
+            // Đóng kết nối database.
+            db.close();
+        }
     }
 
     // check song existed
     public boolean checkSongExisted(String songName, String songSinger, int songLength) {
         try {
-            Log.i(TAG, "MyDatabaseHelper.DeleteAllSong ... ");
+            Log.i(TAG, "MyDatabaseHelper.checkSongExisted ... ");
             String sql = "SELECT * FROM " + TB_SONGS + " WHERE " + COL_SONG_NAME + " = '" + songName + "' AND " + COL_SONG_SINGER + " = '" + songSinger + "' AND " + COL_SONG_LENGTH + " = " + songLength;
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor cursor = db.rawQuery(sql, null);
@@ -156,14 +191,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ArrayList<Song> getSongs(int getType,int idPlayList) {
+    public ArrayList<Song> getSongs(int getType, int idPlayList) {
         Log.i(TAG, "MyDatabaseHelper.getSONGS ... ");
         ArrayList<Song> results = new ArrayList<Song>();
         String selectQuery = "SELECT  * FROM " + TB_SONGS;
         if (getType == 1)
             selectQuery = "SELECT  * FROM " + TB_SONGS + " INNER JOIN " + TB_FAVOURITES + " ON " + COL_FAVOURITE_SONG_ID + "=" + COL_SONG_ID;
         if (getType == 2)
-            selectQuery = "SELECT  * FROM " + TB_SONGS + " INNER JOIN " + TB_PLAYLIST_DETAILS + " ON " + COL_PLAYLIST_DETAIL_SONG_ID + "=" + COL_SONG_ID + " WHERE " + COL_PLAYLIST_DETAIL_PLAYLISTS_ID + " = " + idPlayList ;
+            selectQuery = "SELECT  * FROM " + TB_SONGS + " INNER JOIN " + TB_PLAYLIST_DETAILS + " ON " + COL_PLAYLIST_DETAIL_SONG_ID + "=" + COL_SONG_ID + " WHERE " + COL_PLAYLIST_DETAIL_PLAYLISTS_ID + " = " + idPlayList;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -228,7 +263,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
         long ID = db.insert(TB_PLAYLISTS, null, values);
         db.close();
-        return  ID;
+        return ID;
     }
 
     public int countSongInPlaylist(int playlistID) {
