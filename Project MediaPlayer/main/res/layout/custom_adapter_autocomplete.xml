@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="10dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="70"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="10dp">
+        <TextView
+            android:id="@+id/txtSongName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:text="Người Âm Phủ"
+            android:textSize="18dp"
+            />
+
+        <TextView
+            android:id="@+id/txtSinger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:text="OSAD, VRT"
+            android:textSize="14dp"
+            android:layout_marginTop="5dp"
+            android:textColor="#E8E8E8"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginBottom="10dp"
+        android:layout_width="0dp"
+        android:layout_weight="20"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginRight="10dp">
+        <ImageView
+            android:id="@+id/imgPicture"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/girl"/>
+    </LinearLayout>
+</LinearLayout>
